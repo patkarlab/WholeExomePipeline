@@ -1,0 +1,244 @@
+CHROM,POS,ID,REF,ALT,Variant_callers,SomaticFlag,ref_count,alt_count,VAF%
+chr1,27057651,.,TTATGGACAACAAGGCCCCAGCGGG,T,Platypus,,299,3,0.993
+chr1,27057777,.,TGCCCAACCTTCGTATCAGCAGCAGCCACAGTCTCAACCACCACAGCTCCAGTCCTCTCAG,T,Platypus,,414,5,1.1900000000000002
+chr1,27057804,rs61749357,A,C,LoFreq,,427,3,0.698
+chr1,27105699,.,TCCTAAACTAGAAGAGGAAGAAGAAGAGGAAGTAGTTGAA,T,Platypus,,358,3,0.831
+chr1,92946479,rs11164605,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,332,100.0
+chr1,155880573,rs493446,C,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,184,195,51.5
+chr1,202304868,rs14451,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,98,102,51.0
+chr1,231557255,rs12097901,C,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,119,158,56.99999999999999
+chr2,16085625,.,TGATGAAGAGGAA,T,Platypus,,323,2,0.615
+chr2,25965231,.,T,G,LoFreq,,316,3,0.9400000000000001
+chr2,25965294,.,C,G,Freebayes,,299,16,5.08
+chr3,42449195,.,TA,T,"VarScan2, Freebayes, Haplotypecaller",,189,36,16.0
+chr3,42449195,.,T,TA,Freebayes,,189,18,8.7
+chr3,47103653,.,C,G,Freebayes,,290,44,13.200000000000001
+chr3,47162661,rs6767907,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,184,156,45.9
+chr3,47162886,rs76208147,C,T,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,189,184,49.3
+chr3,105438957,rs2305036,T,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,152,189,55.400000000000006
+chr3,105439026,rs2305035,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,160,184,53.5
+chr3,128205860,rs1573858,G,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,228,100.0
+chr3,168830601,.,A,T,Freebayes,,262,15,5.42
+chr4,24578066,.,CATGCGTTGAATGAGCAGAATGTGTTGA,C,Platypus,,355,4,1.11
+chr4,55141055,rs1873778,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,309,100.0
+chr4,106157297,.,CCCAGAGTTCACATCTCCCTCAAAACCAGCAACAGCAGCAAAAATTACAAATAAAGAATAAAGAGGAAATACT,C,Platypus,,328,3,0.906
+chr4,106180844,.,G,A,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,153,123,44.6
+chr4,106196245,.,GCAGCCCCAGCCTCTACAGAAGCAGCCACCA,G,Platypus,,355,5,1.39
+chr4,106196951,rs2454206,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,183,168,47.9
+chr4,164050088,.,A,G,LoFreq,,142,5,3.4000000000000004
+chr4,164050090,.,A,G,"LoFreq, Freebayes",,132,15,10.2
+chr4,164050094,.,T,G,"LoFreq, Freebayes",,144,7,4.64
+chr4,164050103,.,C,G,"LoFreq, Freebayes",,148,10,6.329999999999999
+chr4,164050104,.,A,G,LoFreq,,151,6,3.82
+chr4,164050106,.,T,G,LoFreq,,151,10,6.21
+chr4,164050109,.,T,G,"LoFreq, Freebayes, Platypus",,147,16,9.82
+chr4,164050112,.,A,G,Platypus,,143,23,13.900000000000002
+chr4,164050118,.,A,G,"LoFreq, Freebayes, Platypus",,145,24,14.2
+chr4,164050124,.,T,G,"VarScan2, LoFreq, Freebayes, Platypus",SOMATIC,144,32,18.2
+chr4,164050130,.,T,G,LoFreq,,166,8,4.6
+chr4,164050137,.,T,G,LoFreq,,175,6,3.3099999999999996
+chr4,164050199,.,T,G,"VarScan2, LoFreq, Freebayes",,188,24,11.3
+chr4,164050205,.,T,G,"LoFreq, Freebayes",,207,15,6.76
+chr4,164050208,.,T,G,"LoFreq, Freebayes",,204,19,8.52
+chr4,164050211,.,T,G,LoFreq,,205,19,8.48
+chr4,164050217,.,T,G,"LoFreq, Freebayes",,209,21,9.13
+chr4,164085425,rs4691896,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,265,100.0
+chr5,131822055,rs9282762,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,323,100.0
+chr5,149435759,rs216136,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,360,100.0
+chr5,149436545,rs216137,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,344,100.0
+chr5,149450132,rs10079250,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,147,150,50.5
+chr5,149460553,rs216123,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,183,159,46.5
+chr5,170837513,.,C,CT,"VarScan2, Strelka, Haplotypecaller",,204,52,20.3
+chr6,41903782,rs1051130,A,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,1,318,99.7
+chr7,50467767,rs61731355,C,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,175,183,51.1
+chr7,92734451,rs6965201,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,1,340,99.7
+chr7,92762681,rs1029357,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,1,348,99.7
+chr7,92763592,.,A,AGGAGATCCACTCATT,Platypus,,341,3,0.872
+chr7,92763600,.,TCAATGAGTGGATCTC,T,Platypus,,338,2,0.588
+chr7,92764982,rs1133906,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,352,100.0
+chr7,101459851,.,C,A,Freebayes,,23,2,8.0
+chr7,101460457,rs67759956,A,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,299,100.0
+chr7,139094364,rs368249579,AAG,A,"VarScan2, Platypus",,262,22,7.75
+chr7,148543583,.,G,C,Freebayes,,290,46,13.700000000000001
+chr8,77745635,rs2733733,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,122,115,48.5
+chr8,77761919,rs61729527,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,166,176,51.5
+chr8,77765175,.,ACCT,A,Platypus,,353,2,0.563
+chr8,77765277,.,CACTCCTCCCCCACCACCACCACCTCCT,C,Platypus,,283,1,0.35200000000000004
+chr8,77765289,.,A,C,LoFreq,,226,12,5.04
+chr8,77765292,.,A,C,LoFreq,,230,5,2.13
+chr8,77765295,.,A,C,LoFreq,,226,9,3.83
+chr8,77765298,.,A,C,LoFreq,,223,7,3.04
+chr8,77765319,.,T,TC,Platypus,,220,2,0.901
+chr8,77765328,.,A,C,LoFreq,,238,11,4.42
+chr8,77765337,.,A,C,LoFreq,,268,10,3.5999999999999996
+chr8,77765352,.,A,C,LoFreq,,301,6,1.95
+chr8,77765865,rs2728455,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,180,147,45.0
+chr8,77775448,.,ACCTCCT,A,Platypus,,354,3,0.84
+chr9,5081780,rs2230724,G,A,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,107,185,63.4
+chr9,136545852,.,CCTCCAGACACACGCAGACCTGGCCGCCAGGCCCACACTGGCCA,C,Platypus,,318,11,3.34
+chr9,136545921,.,CCAGGCCCACACTGGCCACTCCAGAGAGCTGCCGGGAGGACAAG,C,Platypus,,357,3,0.8330000000000001
+chr9,139390970,.,GCTTTGCTGCTGCTGGATGTTTGCTGGCTGCAGGTTC,G,Platypus,,380,3,0.783
+chr9,139391636,rs2229974,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,187,173,48.1
+chr9,139397707,rs10521,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,157,155,49.7
+chr10,27381349,rs2297145,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,218,100.0
+chr10,27389197,rs7897309,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,315,100.0
+chr10,53423462,.,CAA,C,"Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,40,46,53.5
+chr10,53423462,.,CAA,CA,Strelka,,40,64,61.5
+chr10,53423462,rs56804341,CA,C,"VarScan2, Freebayes, Platypus, Haplotypecaller",SOMATIC,40,64,61.5
+chr10,112361870,rs2419565,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,289,100.0
+chr11,534242,rs12628,A,G,"VarScan2, LoFreq, Freebayes, Platypus, Haplotypecaller",SOMATIC,236,35,12.9
+chr11,32417945,rs16754,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,37,284,88.5
+chr11,32456562,rs1799925,G,A,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,29,264,90.10000000000001
+chr11,64534484,.,T,G,"LoFreq, Freebayes",,152,11,6.75
+chr11,85692181,rs76719109,A,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,254,100.0
+chr11,85725937,rs592297,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,57,100.0
+chr11,118344778,.,T,A,"VarScan2, Freebayes",,326,27,7.6499999999999995
+chr11,118373501,.,CTTGGTGTCCAAGAGCTCCTCTTTAAAGGGAGAGAAGACCAAAGTG,C,Platypus,,376,2,0.529
+chr12,11992168,rs11611479,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,353,100.0
+chr12,12871099,rs2066827,T,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,180,159,46.9
+chr12,12871222,.,G,T,Freebayes,,293,17,5.48
+chr12,54686468,.,C,G,LoFreq,,339,12,3.42
+chr12,111884608,rs3184504,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,341,100.0
+chr12,111885815,.,CTCCCTTCCTCACTGGGATTCAGAG,C,Platypus,,345,4,1.15
+chr12,122242666,.,A,C,Freebayes,,187,27,12.6
+chr12,122242675,.,A,C,LoFreq,,229,13,5.37
+chr12,122243905,rs1168666,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,184,166,47.4
+chr12,122246136,rs145928437,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,157,170,52.0
+chr12,122247853,rs61736010,C,T,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,191,182,48.8
+chr12,122248582,rs895952,C,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,317,100.0
+chr12,122252209,.,A,C,Freebayes,,51,4,7.2700000000000005
+chr12,122252236,.,G,C,Freebayes,,30,2,6.25
+chr12,122252242,.,A,C,Freebayes,,23,2,8.0
+chr12,122252266,.,A,C,Freebayes,,12,2,14.299999999999999
+chr12,122252332,.,G,C,Freebayes,,91,8,8.08
+chr12,122252338,.,A,C,Freebayes,,104,6,5.45
+chr12,122252342,.,A,C,LoFreq,,118,7,5.6000000000000005
+chr12,122252343,.,T,A,"VarScan2, Freebayes",,104,22,17.5
+chr12,122252355,.,T,A,Freebayes,,143,19,11.700000000000001
+chr12,122255464,.,TCAACCACCTCACCCTCGTCCTCGGCCTCCG,T,Platypus,,372,2,0.5349999999999999
+chr12,122255509,.,CAGGAGAGCACCGAGGAGGAAG,C,Platypus,,343,4,1.15
+chr12,122255537,.,CGGA,C,Platypus,,282,4,1.4000000000000001
+chr12,122260549,rs58801491,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,200,168,45.7
+chr12,122261221,.,TCCCAGCCCCTCCACCACCCCTTCCCC,T,Platypus,,209,4,1.8800000000000001
+chr12,122261237,.,A,C,LoFreq,,130,7,5.11
+chr12,122261261,.,A,C,"LoFreq, Freebayes",,99,7,6.6000000000000005
+chr12,122261267,.,A,C,Freebayes,,115,6,4.96
+chr12,122261276,.,A,C,"LoFreq, Freebayes",,123,12,8.89
+chr12,122265517,rs61743641,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,189,153,44.7
+chr14,99641543,.,GCTC,G,"VarScan2, Platypus, Haplotypecaller",,302,23,7.08
+chr14,105239894,rs1130233,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,162,162,50.0
+chr16,3778424,.,TTGTTGCTGCTGC,T,Platypus,,351,4,1.13
+chr16,3778439,.,TTGC,T,Platypus,,356,2,0.559
+chr16,3778664,.,TTGCATGCCGGGCTGGGACTGGAGGCCAGGCTGGGGC,T,Platypus,,356,10,2.73
+chr16,3779199,.,T,G,Freebayes,,219,18,7.59
+chr16,3779210,.,T,G,Freebayes,,197,52,20.9
+chr16,14676063,.,G,C,"VarScan2, LoFreq, Freebayes, Haplotypecaller",SOMATIC,224,48,17.599999999999998
+chr16,15818092,.,CGTCCAGCTCCTGCTGAAGCCTGTTCTTGGTCTTTTCCAGTTTATCATAAGCGGCCGCCTTCTCCTCGTACTGCTGGGTGAGGTT,C,Platypus,,343,2,0.58
+chr16,15820863,rs16967494,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,177,174,49.6
+chr16,67644900,rs149456343,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,163,182,52.800000000000004
+chr17,7579423,.,GGCTGGTGCAGGGGCCGCCGGTGTAGGAGCT,G,Platypus,,276,4,1.43
+chr17,7749722,.,A,C,Freebayes,,235,14,5.62
+chr17,7750177,rs61462443,T,TACCACC,"Freebayes, Platypus, Haplotypecaller",,112,79,41.4
+chr17,7750177,.,TACCACC,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,112,154,57.9
+chr17,7750177,.,TACCACC,TACCACCACCACC,Strelka,,112,79,41.4
+chr17,7750214,.,A,C,LoFreq,,368,7,1.87
+chr17,7750232,rs11078709,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,168,213,55.900000000000006
+chr17,7750244,.,A,C,LoFreq,,369,7,1.8599999999999999
+chr17,7750481,.,A,C,Freebayes,,267,32,10.7
+chr17,7750533,.,CCCCCCAGGAGCAGAGAGCCATGGCTGCCTGCCTGCCACCCGT,C,Platypus,,239,2,0.83
+chr17,7750539,.,A,C,Freebayes,,223,15,6.3
+chr17,7751016,.,A,C,LoFreq,,182,5,2.67
+chr17,7751050,rs62059713,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,70,88,55.7
+chr17,7751154,.,A,C,"LoFreq, Freebayes",,169,18,9.629999999999999
+chr17,7751168,.,A,C,"LoFreq, Freebayes",,180,18,9.09
+chr17,7751247,.,A,C,LoFreq,,261,5,1.8800000000000001
+chr17,7751253,.,A,C,LoFreq,,269,7,2.54
+chr17,7751778,rs3744249,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,169,178,51.300000000000004
+chr17,7751858,rs72446613,TCACCAC,T,"VarScan2, Strelka, Platypus, Haplotypecaller",SOMATIC,215,136,38.7
+chr17,7751930,.,TACC,T,Platypus,,339,1,0.294
+chr17,7751988,.,A,C,LoFreq,,386,3,0.771
+chr17,7752296,.,A,C,LoFreq,,278,7,2.46
+chr17,7752306,.,A,C,LoFreq,,272,13,4.5600000000000005
+chr17,7754993,rs12939056,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,180,175,49.3
+chr17,29508775,rs1801052,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,141,123,46.6
+chr17,29553485,rs2285892,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,186,177,48.8
+chr17,74732507,rs237058,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,310,100.0
+chr17,74733099,rs237057,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,1,340,99.7
+chr18,42529996,rs11082414,G,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,371,100.0
+chr18,42533130,rs8096662,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,360,100.0
+chr18,42643427,.,GCGCCGCCCCTGCCCCCGCCACCGC,G,Platypus,,318,2,0.625
+chr18,42643450,.,G,C,LoFreq,,191,12,5.91
+chr18,42643468,.,A,C,LoFreq,,156,6,3.6999999999999997
+chr18,42643474,.,G,C,LoFreq,,142,11,7.19
+chr18,42643477,.,A,C,LoFreq,,142,8,5.33
+chr18,42643492,.,G,C,Freebayes,,117,11,8.59
+chr18,42643495,.,A,C,LoFreq,,113,7,5.83
+chr18,42643501,.,T,C,"LoFreq, Freebayes",,104,6,5.45
+chr18,42643503,.,T,C,"LoFreq, Freebayes",,102,9,8.110000000000001
+chr18,42643504,.,A,C,"LoFreq, Freebayes",,108,6,5.26
+chr18,42643508,.,A,C,LoFreq,,121,5,3.9699999999999998
+chr18,42643511,.,A,C,LoFreq,,122,2,1.6099999999999999
+chr19,855587,rs17223045,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,140,178,56.00000000000001
+chr19,856070,.,A,T,Freebayes,,305,33,9.76
+chr19,856075,.,G,T,VarScan2,,322,18,5.29
+chr19,4048129,.,ACGCGCATGTGGTTCTTCAGGTCGTAGTTGTGGGCAAAGGCGGCGCCGCACTGCTGGCACAGGTACGGCTTCTCGCCCGTGTGCT,A,Platypus,,323,3,0.9199999999999999
+chr19,4048199,.,T,G,LoFreq,,335,4,1.18
+chr19,4054378,.,CCGACA,C,Platypus,,320,2,0.621
+chr19,10265312,rs721186,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,1,338,99.7
+chr19,10267077,rs2228611,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,312,100.0
+chr19,10273372,rs2228612,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,233,100.0
+chr19,10287991,.,G,C,Freebayes,,261,24,8.42
+chr19,13054586,.,AGAAGACAAGAAACGCAAAGAGGAGGAGGAGGCAGAGGACAAGGAGGAT,A,Platypus,,356,1,0.27999999999999997
+chr19,23544923,.,C,A,Freebayes,,22,2,8.33
+chr19,23544954,.,A,T,Freebayes,,34,2,5.56
+chr19,23544988,.,T,A,Freebayes,,62,4,6.0600000000000005
+chr19,23545004,rs296092,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,89,100.0
+chr19,23545032,.,A,C,Freebayes,,97,12,11.0
+chr19,23545032,rs376232688,A,G,"LoFreq, Freebayes",,97,13,11.799999999999999
+chr19,23545272,.,T,G,LoFreq,,307,5,1.6
+chr19,23545447,rs296091,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,211,100.0
+chr19,23557502,rs141062920,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,138,100.0
+chr19,33792431,.,C,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,178,128,41.8
+chr19,33792631,rs34529039,C,A,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,42,97,69.8
+chr19,33792754,.,GGGC,G,Platypus,,215,6,2.71
+chr19,33792976,.,GGGGCCCGC,G,"VarScan2, Strelka, Platypus, Haplotypecaller",SOMATIC,81,78,49.1
+chr19,33793007,.,TCGC,T,Platypus,,171,2,1.16
+chr19,56171544,.,A,C,LoFreq,,216,3,1.37
+chr19,56171885,.,T,G,LoFreq,,122,3,2.4
+chr19,56171896,.,A,C,LoFreq,,139,10,6.710000000000001
+chr19,56171898,.,G,C,LoFreq,,146,8,5.19
+chr19,56180968,rs617073,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,186,176,48.6
+chr20,31022959,rs6058694,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,334,100.0
+chr20,31024274,rs4911231,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,174,162,48.199999999999996
+chr21,36164600,.,C,CGGGGGG,Platypus,,224,11,4.68
+chr21,36164603,.,C,G,"VarScan2, LoFreq, Freebayes, Platypus, Haplotypecaller",SOMATIC,195,44,18.4
+chr21,36164605,.,A,C,Freebayes,,160,31,16.2
+chr21,36164605,.,A,G,"VarScan2, LoFreq, Freebayes, Haplotypecaller",SOMATIC,160,39,19.6
+chr21,36164607,.,C,G,LoFreq,,217,11,4.82
+chr21,36164608,.,G,C,Freebayes,,210,16,7.08
+chr21,36164609,.,C,G,LoFreq,,218,9,3.9600000000000004
+chr21,36164610,.,T,G,"VarScan2, LoFreq, Platypus, Haplotypecaller",SOMATIC,156,42,21.2
+chr21,36164619,.,A,C,LoFreq,,218,9,3.9600000000000004
+chr21,36164622,rs202068364,A,C,LoFreq,,223,6,2.62
+chr22,28194418,.,CTGCCCCCGAACTGCAGGCCCGGTGAAGGCAGCGCGGGCACGTGGCCCTCTCCGGGCATCCTCATCGGCTCCTGCAGAG,C,Platypus,,317,1,0.314
+chr22,28194873,.,GTTTTGGCGCTGCTGCTGCTGCTGCTGT,G,Platypus,,379,7,1.81
+chr22,28194933,.,TTGC,T,VarScan2,,318,20,5.92
+chr22,28194933,.,TTGCTGC,T,Platypus,,318,4,1.24
+chr22,28195606,.,TGCTGCTGCTGCTGCTGGG,T,Platypus,,330,5,1.49
+chr22,28195937,.,GGTTAGGGCTCTGGTCCAGCGGCAGGCATGGGGCCGGCACGGCGTGGCTGGAGGCACCTGA,G,Platypus,,366,2,0.543
+chr22,30733707,.,G,C,Platypus,,95,2,2.06
+chr22,30733708,.,G,C,Platypus,,94,3,3.09
+chr22,30733709,.,G,C,Platypus,,95,6,5.94
+chrX,15838366,rs2301724,C,T,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,289,100.0
+chrX,39932907,rs6520618,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,208,157,43.0
+chrX,39933339,rs5917933,A,G,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,179,174,49.3
+chrX,44929077,rs2230018,C,A,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,188,178,48.6
+chrX,44938563,rs20539,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,120,124,50.8
+chrX,47062534,rs2070169,G,A,"VarScan2, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,157,144,47.8
+chrX,129147079,rs4830173,T,C,"VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller",SOMATIC,0,339,100.0
+chrX,129147630,.,GGTTCCCTTGTCGGCTCCAGCTCCTGCCCCGCTTTCAGTCCCA,G,Platypus,,372,1,0.268
+chrX,129147835,.,T,G,LoFreq,,320,4,1.23
+chrX,129147846,.,A,C,LoFreq,,325,5,1.52
+chrX,129147874,.,T,C,LoFreq,,298,11,3.56
+chrX,129147875,.,T,C,LoFreq,,312,5,1.58
+chrX,129147879,.,TCCTACACCGGTGCCTGCACCCACCCCAGCCCCCATCTTTACTCCAGCC,T,Platypus,,300,4,1.32
