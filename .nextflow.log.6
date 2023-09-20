@@ -1,0 +1,142 @@
+Jul-31 18:27:11.878 [main] DEBUG nextflow.cli.Launcher - $> nextflow ./wes.nf -entry WES --bedfile /home/pipelines/mutation_detector_nextflow/bedfile/Leukemia_Panel_Myeloid_2023_Feb_hg37_sortd -resume -bg
+Jul-31 18:27:12.015 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 21.10.6
+Jul-31 18:27:12.066 [main] INFO  nextflow.cli.CmdRun - Launching `./wes.nf` [agitated_panini] - revision: dd61ff3f1d
+Jul-31 18:27:12.079 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /home/diagnostics/pipelines/WholeExomePipeline/nextflow.config
+Jul-31 18:27:12.079 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /home/diagnostics/pipelines/WholeExomePipeline/nextflow.config
+Jul-31 18:27:12.098 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Jul-31 18:27:12.679 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/home/diagnostics/.nextflow/plugins
+Jul-31 18:27:12.680 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Jul-31 18:27:12.688 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Jul-31 18:27:12.689 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Jul-31 18:27:12.691 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Jul-31 18:27:12.698 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Jul-31 18:27:12.737 [main] DEBUG nextflow.Session - Session uuid: 1ea82114-0523-4313-a5bb-df88f0934bf3
+Jul-31 18:27:12.737 [main] DEBUG nextflow.Session - Run name: agitated_panini
+Jul-31 18:27:12.738 [main] DEBUG nextflow.Session - Executor pool size: 156
+Jul-31 18:27:12.757 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 21.10.6 build 5660
+  Created: 21-12-2021 16:55 UTC (22:25 IDT)
+  System: Linux 5.4.0-150-generic
+  Runtime: Groovy 3.0.9 on OpenJDK 64-Bit Server VM 11.0.1+13-LTS
+  Encoding: UTF-8 (UTF-8)
+  Process: 2532914@jarvis [169.254.95.120]
+  CPUs: 156 - Mem: 755.5 GB (1.5 GB) - Swap: 264 GB (263.9 GB)
+Jul-31 18:27:12.831 [main] DEBUG nextflow.Session - Work-dir: /home/diagnostics/pipelines/WholeExomePipeline/work [xfs]
+Jul-31 18:27:12.831 [main] DEBUG nextflow.Session - Script base path does not exist or is not a directory: /home/diagnostics/pipelines/WholeExomePipeline/bin
+Jul-31 18:27:12.838 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Jul-31 18:27:12.848 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Jul-31 18:27:12.914 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 157; maxThreads: 1000
+Jul-31 18:27:12.994 [main] DEBUG nextflow.Session - Session start invoked
+Jul-31 18:27:12.997 [main] DEBUG nextflow.trace.TraceFileObserver - Flow starting -- trace file: /home/diagnostics/pipelines/WholeExomePipeline/Final_Output/pipeline_trace.txt
+Jul-31 18:27:14.099 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jul-31 18:27:14.112 [main] INFO  nextflow.Nextflow - 
+STARTING PIPELINE
+=*=*=*=*=*=*=*=*=
+Sample list: /home/diagnostics/pipelines/WholeExomePipeline/sample_list.csv
+BED file: /home/pipelines/mutation_detector_nextflow/bedfile/Leukemia_Panel_Myeloid_2023_Feb_hg37_sortd.bed
+Sequences in:/home/diagnostics/pipelines/WholeExomePipeline/sequences
+
+Jul-31 18:27:14.202 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 157; maxThreads: 1000
+Jul-31 18:27:14.280 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.280 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.285 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Jul-31 18:27:14.316 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=25; memory=755.5 GB; capacity=156; pollInterval=100ms; dumpInterval=5m
+Jul-31 18:27:14.387 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.387 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.392 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.392 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.394 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.394 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.398 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.398 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.402 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.402 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.411 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.411 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.414 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.414 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.421 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.421 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.429 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.429 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.432 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.432 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.435 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.436 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.438 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.438 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.440 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.440 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.442 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.442 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.447 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.447 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.453 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.453 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.455 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.455 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.458 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.458 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.470 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.470 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.472 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.472 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.478 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-31 18:27:14.478 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-31 18:27:14.480 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: merge_csv, WES:RealignerTargetCreator, WES:generatefinalbam, WES:BaseRecalibrator, varscan, format_pindel, vardict, WES:pindel, WES:cava, coverage_mosdepth, WES:mapping_reads, PrintReads, RealignerTargetCreator, pindel, WES:haplotypecaller, WES:PrintReads, haplotypecaller, freebayes, WES:freebayes, WES:pair_assembly_pear, trimming_trimmomatic, somaticSeq_run, BaseRecalibrator, platypus, generatefinalbam, minimap_getitd, WES:platypus, sam_conversion, WES:sam_conversion, cava, WES:IndelRealigner, WES:somaticSeq_run, pair_assembly_pear, WES:mark_duplicates, mark_duplicates, lofreq, WES:minimap_getitd, IndelRealigner, WES:coverage_mosdepth, WES:trimming_trimmomatic, WES:strelka, fastqc, WES:varscan, strelka, WES:lofreq, WES:merge_csv, mapping_reads
+Jul-31 18:27:14.480 [main] DEBUG nextflow.Session - Ignite dataflow network (23)
+Jul-31 18:27:14.484 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:trimming_trimmomatic
+Jul-31 18:27:14.485 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:pair_assembly_pear
+Jul-31 18:27:14.485 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:mapping_reads
+Jul-31 18:27:14.486 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:sam_conversion
+Jul-31 18:27:14.487 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:mark_duplicates
+Jul-31 18:27:14.487 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:RealignerTargetCreator
+Jul-31 18:27:14.488 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:IndelRealigner
+Jul-31 18:27:14.489 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:BaseRecalibrator
+Jul-31 18:27:14.491 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:PrintReads
+Jul-31 18:27:14.491 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:generatefinalbam
+Jul-31 18:27:14.492 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:minimap_getitd
+Jul-31 18:27:14.492 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:coverage_mosdepth
+Jul-31 18:27:14.493 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:freebayes
+Jul-31 18:27:14.494 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:haplotypecaller
+Jul-31 18:27:14.494 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:strelka
+Jul-31 18:27:14.496 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:platypus
+Jul-31 18:27:14.496 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:varscan
+Jul-31 18:27:14.498 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:lofreq
+Jul-31 18:27:14.499 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:pindel
+Jul-31 18:27:14.500 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:somaticSeq_run
+Jul-31 18:27:14.500 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:cava
+Jul-31 18:27:14.500 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > WES:merge_csv
+Jul-31 18:27:14.500 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Jul-31 18:27:14.500 [main] DEBUG nextflow.Session - Session await
+Jul-31 18:27:14.671 [Actor Thread 52] INFO  nextflow.processor.TaskProcessor - [4a/19269c] Cached process > WES:trimming_trimmomatic (1)
+Jul-31 18:27:14.712 [Actor Thread 58] INFO  nextflow.processor.TaskProcessor - [f5/cea357] Cached process > WES:pair_assembly_pear (1)
+Jul-31 18:27:14.723 [Actor Thread 67] INFO  nextflow.processor.TaskProcessor - [b2/25b7e7] Cached process > WES:mapping_reads (1)
+Jul-31 18:27:14.736 [Actor Thread 74] INFO  nextflow.processor.TaskProcessor - [34/f39523] Cached process > WES:sam_conversion (1)
+Jul-31 18:27:14.754 [Actor Thread 81] INFO  nextflow.processor.TaskProcessor - [34/1a403f] Cached process > WES:mark_duplicates (1)
+Jul-31 18:27:14.778 [Actor Thread 89] INFO  nextflow.processor.TaskProcessor - [e5/a7a462] Cached process > WES:RealignerTargetCreator (1)
+Jul-31 18:27:14.798 [Actor Thread 96] INFO  nextflow.processor.TaskProcessor - [3e/eebf87] Cached process > WES:IndelRealigner (1)
+Jul-31 18:27:14.824 [Actor Thread 104] INFO  nextflow.processor.TaskProcessor - [38/20c709] Cached process > WES:BaseRecalibrator (1)
+Jul-31 18:27:14.841 [Actor Thread 114] INFO  nextflow.processor.TaskProcessor - [70/5643d6] Cached process > WES:PrintReads (1)
+Jul-31 18:27:14.861 [Actor Thread 121] INFO  nextflow.processor.TaskProcessor - [d7/d6682b] Cached process > WES:generatefinalbam (1)
+Jul-31 18:27:14.877 [Actor Thread 121] DEBUG n.util.BlockingThreadExecutorFactory - Thread pool name=FileTransfer; maxThreads=468; maxQueueSize=1404; keepAlive=1m
+Jul-31 18:27:14.880 [Actor Thread 137] INFO  nextflow.processor.TaskProcessor - [89/d9f987] Cached process > WES:platypus (1)
+Jul-31 18:27:14.887 [Actor Thread 148] INFO  nextflow.processor.TaskProcessor - [80/004416] Cached process > WES:freebayes (1)
+Jul-31 18:27:14.888 [Actor Thread 143] INFO  nextflow.processor.TaskProcessor - [f2/88b8a6] Cached process > WES:strelka (1)
+Jul-31 18:27:14.894 [Actor Thread 149] INFO  nextflow.processor.TaskProcessor - [53/847cf6] Cached process > WES:coverage_mosdepth (1)
+Jul-31 18:27:14.894 [Actor Thread 133] INFO  nextflow.processor.TaskProcessor - [26/abd89e] Cached process > WES:lofreq (1)
+Jul-31 18:27:14.899 [Actor Thread 152] INFO  nextflow.processor.TaskProcessor - [8d/b5dcc9] Cached process > WES:minimap_getitd (1)
+Jul-31 18:27:14.899 [Actor Thread 145] INFO  nextflow.processor.TaskProcessor - [29/582936] Cached process > WES:haplotypecaller (1)
+Jul-31 18:27:14.899 [Actor Thread 136] INFO  nextflow.processor.TaskProcessor - [2d/555a07] Cached process > WES:varscan (1)
+Jul-31 18:27:14.932 [Actor Thread 131] INFO  nextflow.processor.TaskProcessor - [e7/bdb648] Cached process > WES:pindel (1)
+Jul-31 18:27:14.967 [Actor Thread 210] INFO  nextflow.processor.TaskProcessor - [cc/6692a4] Cached process > WES:somaticSeq_run (1)
+Jul-31 18:27:14.978 [Actor Thread 224] INFO  nextflow.processor.TaskProcessor - [58/30057b] Cached process > WES:cava (1)
+Jul-31 18:27:15.032 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jul-31 18:27:15.036 [Task submitter] INFO  nextflow.Session - [11/60ca4f] Submitted process > WES:merge_csv (1)
+Jul-31 18:27:15.780 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 22; name: WES:merge_csv (1); status: COMPLETED; exit: 0; error: -; workDir: /home/diagnostics/pipelines/WholeExomePipeline/work/11/60ca4fe9d5269253e7f66373e1c9af]
+Jul-31 18:27:15.783 [main] DEBUG nextflow.Session - Session await > all process finished
+Jul-31 18:27:15.785 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Jul-31 18:27:15.799 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=1; failedCount=0; ignoredCount=0; cachedCount=21; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=681ms; failedDuration=0ms; cachedDuration=2h 46m 22s;loadCpus=0; loadMemory=0; peakRunning=1; peakCpus=1; peakMemory=0; ]
+Jul-31 18:27:15.799 [main] DEBUG nextflow.trace.TraceFileObserver - Flow completing -- flushing trace file
+Jul-31 18:27:15.808 [main] DEBUG nextflow.CacheDB - Closing CacheDB done
+Jul-31 18:27:15.834 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
