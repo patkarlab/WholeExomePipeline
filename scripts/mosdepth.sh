@@ -1,4 +1,4 @@
-i!/usr/bin/bash
+#!/usr/bin/bash
 
 bamfile=$1
 output_prefix=$2

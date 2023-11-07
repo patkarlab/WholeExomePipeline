@@ -9,8 +9,11 @@ data = pd.read_csv(inputFile,sep = '\t')
 
 
 
-data[['CHROM','POS']] = data['Location'].str.split(':', expand=True)
-data[['Start','End']] = data['POS'].str.split('-', expand=True)
+#data[['CHROM','POS']] = data['Location'].str.split(':', expand=True)
+#data[['Start','End']] = data['POS'].str.split('-', expand=True)
+data[['CHROM', 'POS']] = data['Location'].str.split(':', expand=True)
+data['Start'] = data['POS'].str.split('-', expand=True)[0]
+data['End'] = data['POS'].str.split('-', expand=True)[1]
 
 extractedData = data[[ 'CHROM','Start', 'End',
                        'SYMBOL',

@@ -170,7 +170,7 @@ process coverage_mosdepth {
 		tuple val (Sample), file ("*")
 	script:
 	"""
-	${params.mosdepth_script} ${finalBam} ${Sample}_cov ${params.bedfileLymphoma_path}
+	${params.mosdepth_script} ${finalBam} ${Sample}_cov ${params.bedfile}.bed
 	${params.extract_COV50_script_path} ${Sample}_cov.regions.bed ${Sample}_median50
 	sleep 2s
 	"""
