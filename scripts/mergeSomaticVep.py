@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
 import sys
 import pandas as pd
@@ -29,10 +29,10 @@ df2 = pd.read_csv(input2, sep=',')
 merge = df2.merge(df1, how = 'inner', left_on = ['CHROM','Start'], right_on = ['CHROM', 'POS'])
 
 # Merge based on columns
-merge = df2.merge(df1, how='inner', left_on=['CHROM'], right_on=['CHROM'])
+#merge = df2.merge(df1, how='inner', left_on=['CHROM'], right_on=['CHROM'])
 
 # Filter rows where 'POS' is within the range of 'Start' and 'END'
-merge = merge[ (merge['POS'] == merge['Start']) | ((merge['POS'] >= merge['Start']) & (merge['POS'] <= merge['End']))]
+#merge = merge[ (merge['POS'] == merge['Start']) | ((merge['POS'] >= merge['Start']) & (merge['POS'] <= merge['End']))]
 
 
 output = merge.drop_duplicates() #to remove duplicates

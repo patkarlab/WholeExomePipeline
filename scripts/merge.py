@@ -12,6 +12,7 @@ mosdepthCov_path = sys.argv[5]
 mosCOV50_path = sys.argv[6]
 pindel_path = sys.argv[7]
 somaticseq_path = sys.argv[8]
+pharma = sys.argv[9]
 
 csvfilenames = [ ]
 
@@ -21,6 +22,7 @@ mosdepthCov_df = pd.read_csv(mosdepthCov_path, sep='\t', names=['Chrom', 'Start'
 mosCOV50_df = pd.read_csv(mosCOV50_path, sep='\t')
 pindel_df = pd.read_csv(pindel_path, sep='\t')
 somaticseq_df = pd.read_csv(somaticseq_path, sep='\t')
+pharma_df = pd.read_csv(pharma, sep='\t')
 
 # Create a new Excel writer
 writer = pd.ExcelWriter(outfile)
@@ -32,6 +34,7 @@ mosdepthCov_df.to_excel(writer, sheet_name='mosdepthCov', index=False)
 mosCOV50_df.to_excel(writer, sheet_name='mosCOV50', index=False)
 pindel_df.to_excel(writer, sheet_name='pindel', index=False)
 somaticseq_df.to_excel(writer, sheet_name='somaticseq', index=False)
+pharma_df.to_excel(writer, sheet_name='pharma_marker', index=False)
 
 # Save the Excel file
 writer.save()

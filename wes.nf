@@ -145,6 +145,18 @@ process generatefinalbam {
 	"""
 
 }
+process hsmetrics_run{
+	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*_hsmetrics.txt'
+	input:
+		tuple val(Sample), file(finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
+	output:
+		tuple val (Sample), file ("*_hsmetrics.txt")
+	script:
+	"""
+	${params.java_path}/java -jar ${params.picard_path} CollectHsMetrics I= ${finalBam} O= ${Sample}_hsmetrics.txt BAIT_INTERVALS= ${params.bedfile}.interval_list TARGET_INTERVALS= ${params.bedfile}.interval_list R= ${params.genome} VALIDATION_STRINGENCY=LENIENT
+	${params.hsmetrics_all} $PWD/Final_Output/hsmetrics.tsv ${Sample} ${Sample}_hsmetrics.txt
+	"""
+}
 
 process minimap_getitd {
 	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*_getitd'
@@ -309,7 +321,7 @@ process somaticSeq_run {
 	input:
 		tuple val (Sample), file (lofreqVcf), file (varscanVcf), file (platypusVcf), file (strelkaVcf), file (haplotypecallerVcf), file (freebayesVcf), file(finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
 	output:
-		tuple val (Sample), file ("*_somaticseq.vep.txt")
+		tuple val (Sample), file ("*_somaticseq.vep_annonvar.txt")
 	script:
 	"""
 	${params.vcf_sorter_path} ${freebayesVcf} ${Sample}.freebayes.sorted.vcf
@@ -342,18 +354,27 @@ process somaticSeq_run {
 	sed -i 's/##INFO=<ID=VLK012,Number=6,Type=Integer,Description="Calling decision of the 6 algorithms: VarScan2, LoFreq, Strelka, SnvCaller_0, SnvCaller_1, SnvCaller_2">/##INFO=<ID=VLSFPH,Number=6,Type=String,Description="Calling decision of the 6 algorithms:  VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller">/g' ${Sample}.somaticseq.vcf
 
 	sed -i 's/VLK012/VLSFPH/g' ${Sample}.somaticseq.vcf
-	# to extrac6t vaf,af,alt and ref count
+	cp ${Sample}.somaticseq.vcf ${PWD}/Final_Output/${Sample}/
+	# to extract vaf,af,alt and ref count
 	${params.extract_somatic_script_path} ${Sample}.somaticseq.vcf ${Sample}.extractedSomaticseq.txt
 	#adding vep
 	${params.vep_script_path} ${Sample}.somaticseq.vcf ${Sample}
 	${params.extract_velheader_script_path} ${Sample}_vep_delheaders.txt ${Sample}.extractedvepdelheaders.txt
 
-	# for merging extracted somaticsseq and velheaders
+	# for merging extracted somaticsseq and vepheaders
 	${params.mergeSomaticvep_script_path} ${Sample}.extractedSomaticseq.txt ${Sample}.extractedvepdelheaders.txt ${Sample}_somaticseq.vep.txt
 	#mv ${Sample}_vep_delheaders.txt ${Sample}_somaticseq.vep.txt
 
 	sed -i 's/SYMBOL/Gene/g' ${Sample}_somaticseq.vep.txt
-	sleep 1s
+
+	#Annotating ${Sample}.somaticseq.vcf using annovar
+	perl ${params.annovarLatest_path}/convert2annovar.pl -format vcf4 ${Sample}.somaticseq.vcf --outfile ${Sample}.somaticseq.avinput --withzyg --includeinfo
+	
+	perl ${params.annovarLatest_path}/table_annovar.pl ${Sample}.somaticseq.avinput --out ${Sample}.somaticseq --remove --protocol refGene,cytoBand,cosmic84,popfreq_all_20150413,avsnp150,intervar_20180118,1000g2015aug_all,clinvar_20170905 --operation g,r,f,f,f,f,f,f --buildver hg19 --nastring '-1' --otherinfo --csvout --thread 10 ${params.annovarLatest_path}/humandb/ --xreffile ${params.annovarLatest_path}/example/gene_fullxref.txt
+
+	#extracting columns  Func.refGene,Gene.refGene,ExonicFunc.refGene,PopFreqMax,InterVar_automated from somaticseq.hg19_multianno.csv and adding them to somaticseq.vep.txt
+	python3 ${params.extract_annovar} ${Sample}.somaticseq.hg19_multianno.csv ${Sample}_somaticseq.vep.txt ${Sample}_somaticseq.vep_annonvar.txt
+	cp ${Sample}_somaticseq.vep_annonvar.txt ${PWD}/Final_Output/${Sample}/
 	"""
 } 
 
@@ -365,7 +386,7 @@ process cava {
 		tuple val(Sample), file ("*.cava.csv")
 	script:
 	"""
-	${params.cava_path}/cava -c ${params.cava_path}/config_v2.txt -t 10 -i ${somaticVcf} -o ${Sample}.somaticseq
+	${params.cava_path}/cava -c ${params.cava_path}/config_v2.txt -t 10 -i ${PWD}/Final_Output/${Sample}/${Sample}.somaticseq.vcf -o ${Sample}.somaticseq
 	python3 ${params.cava_script_path} ${Sample}.somaticseq.txt ${Sample}.cava.csv
 	"""
 }
@@ -378,7 +399,8 @@ process merge_csv {
 		val Sample
 	script:
 	"""
-	python3 ${params.merge_csvs_script} ${Sample} ${PWD}/Final_Output/${Sample}/${Sample}.xlsx  ${cavaCsv} $PWD/Final_Output/${Sample}/${Sample}_cov.mosdepth.summary.txt $PWD/Final_Output/${Sample}/${Sample}_cov.regions.bed $PWD/Final_Output/${Sample}/${Sample}_median50 ${pindelVep} ${somaticseqVep} 
+	python3 ${params.pharma_marker_script} $PWD/Final_Output/${Sample}/${Sample}_somaticseq.vep_annonvar.txt ${params.pharma_input_xlxs} Pharma.tsv
+	python3 ${params.merge_csvs_script} ${Sample} ${PWD}/Final_Output/${Sample}/${Sample}.xlsx  ${cavaCsv} $PWD/Final_Output/${Sample}/${Sample}_cov.mosdepth.summary.txt $PWD/Final_Output/${Sample}/${Sample}_cov.regions.bed $PWD/Final_Output/${Sample}/${Sample}_median50 ${pindelVep} ${somaticseqVep} Pharma.tsv 
 	sleep 1s
 	"""
 
@@ -402,6 +424,7 @@ workflow WES {
 		PrintReads(IndelRealigner.out.join(BaseRecalibrator.out)) | generatefinalbam
 		minimap_getitd(generatefinalbam.out)
 		coverage_mosdepth(generatefinalbam.out)
+		hsmetrics_run(generatefinalbam.out)
 		freebayes(generatefinalbam.out)
 		haplotypecaller(generatefinalbam.out)
 		strelka(generatefinalbam.out)
