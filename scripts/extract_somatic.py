@@ -17,14 +17,14 @@ extracted_df = vcf_df.iloc[:, :5]
 
 # to extract variantcaller tool
 
-vlsfph_values = vcf_df[7].apply(lambda x: x.split('VLSFPH=')[1].split(';')[0].split(','))
+vlsfph_values = vcf_df[7].apply(lambda x: x.split('VLSFPHD=')[1].split(';')[0].split(','))
 Variant_callers = []
 for values in vlsfph_values:
     callers = []
     for i, value in enumerate(values):
-        if i < len(['VarScan2', 'LoFreq', 'Strelka', 'Freebayes', 'Platypus', 'Haplotypecaller']):
+        if i < len(['VarScan2', 'LoFreq', 'Strelka', 'Freebayes', 'Platypus', 'Haplotypecaller', 'Deepvariant']):
             if value == '1':
-                callers.append(['VarScan2', 'LoFreq', 'Strelka', 'Freebayes', 'Platypus', 'Haplotypecaller'][i])
+                callers.append(['VarScan2', 'LoFreq', 'Strelka', 'Freebayes', 'Platypus', 'Haplotypecaller', 'Deepvariant'][i])
     Variant_callers.append(", ".join(callers))
 
 

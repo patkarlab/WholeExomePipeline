@@ -294,12 +294,12 @@ process pindel {
 process format_pindel{
 	 publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*_final.pindel.csv'
 	 input:
-	 	tuple val (Sample), file(bedfile), file (pindelvep)
+	 	tuple val (Sample), file(pindelvep), file (bedfile)
 	output:
 		tuple val (Sample), file ("*")
 	script:
 	"""
-	python3 ${params.format_pindel_wes_script_path} $PWD/Final_Output/${Sample}/${Sample}_cov.regions.bed $PWD/Final_Output/${Sample}/${Sample}_pindel.vep.txt $PWD/Final_Output/${Sample}/${Sample}_final.pindel.csv
+	python3 ${params.format_pindel_wes_script_path} $PWD/Final_Output/${Sample}/${Sample}_cov.regions.bed ${pindelvep} $PWD/Final_Output/${Sample}/${Sample}_final.pindel.csv
 	"""
 }
 
@@ -319,7 +319,7 @@ process lofreq {
 
 process somaticSeq_run {
 	input:
-		tuple val (Sample), file (lofreqVcf), file (varscanVcf), file (platypusVcf), file (strelkaVcf), file (haplotypecallerVcf), file (freebayesVcf), file(finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
+		tuple val (Sample), file (lofreqVcf), file (varscanVcf), file (platypusVcf), file (strelkaVcf), file (haplotypecallerVcf), file (freebayesVcf), file (deepvariantVcf), file(finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
 	output:
 		tuple val (Sample), file ("*_somaticseq.vep_annonvar.txt")
 	script:
@@ -327,10 +327,12 @@ process somaticSeq_run {
 	${params.vcf_sorter_path} ${freebayesVcf} ${Sample}.freebayes.sorted.vcf
 	${params.vcf_sorter_path} ${platypusVcf} ${Sample}.platypus.sorted.vcf
 	${params.vcf_sorter_path} ${haplotypecallerVcf} ${Sample}.haplotypecaller.sorted.vcf
+	${params.vcf_sorter_path} ${deepvariantVcf} ${Sample}.deepvariant.sorted.vcf
 
 	python3 ${params.splitvcf_path} -infile ${Sample}.platypus.sorted.vcf -snv ${Sample}_platypus_cnvs.vcf -indel ${Sample}_platypus_indels.vcf
 	python3 ${params.splitvcf_path} -infile ${Sample}.freebayes.sorted.vcf -snv ${Sample}_freebayes_cnvs.vcf -indel ${Sample}_freebayes_indels.vcf
 	python3 ${params.splitvcf_path} -infile ${Sample}.haplotypecaller.sorted.vcf -snv ${Sample}_haplotypecaller_cnvs.vcf -indel ${Sample}_haplotypecaller_indels.vcf
+	python3 ${params.splitvcf_path} -infile ${Sample}.deepvariant.sorted.vcf -snv ${Sample}_deepvariant_cnvs.vcf -indel ${Sample}_deepvariant_indels.vcf
 
 	${params.vcf_sorter_path} ${Sample}_platypus_cnvs.vcf ${Sample}_platypus_cnvs_sort.vcf
 	${params.vcf_sorter_path} ${Sample}_platypus_indels.vcf ${Sample}_platypus_indels_sort.vcf
@@ -338,8 +340,10 @@ process somaticSeq_run {
 	${params.vcf_sorter_path} ${Sample}_freebayes_indels.vcf ${Sample}_freebayes_indels_sort.vcf
 	${params.vcf_sorter_path} ${Sample}_haplotypecaller_cnvs.vcf ${Sample}_haplotypecaller_cnvs_sort.vcf
 	${params.vcf_sorter_path} ${Sample}_haplotypecaller_indels.vcf ${Sample}_haplotypecaller_indels_sort.vcf
-	
-	somaticseq_parallel.py --output-directory ${Sample}.somaticseq --genome-reference ${params.genome} --inclusion-region ${params.bedfile}.bed --threads 25 --algorithm xgboost  --dbsnp-vcf  /home/reference_genomes/dbSNPGATK/dbsnp_138.hg19.somatic.vcf single --bam-file ${finalBam} --varscan-vcf ${varscanVcf} --lofreq-vcf ${lofreqVcf} --strelka-vcf ${strelkaVcf} --sample-name ${Sample} --arbitrary-snvs ${Sample}_freebayes_cnvs_sort.vcf ${Sample}_platypus_cnvs_sort.vcf ${Sample}_haplotypecaller_cnvs_sort.vcf --arbitrary-indels ${Sample}_freebayes_indels_sort.vcf ${Sample}_platypus_indels_sort.vcf ${Sample}_haplotypecaller_indels_sort.vcf
+	${params.vcf_sorter_path} ${Sample}_deepvariant_cnvs.vcf ${Sample}_deepvariant_cnvs_sort.vcf
+	${params.vcf_sorter_path} ${Sample}_deepvariant_indels.vcf ${Sample}_deepvariant_indels_sort.vcf
+
+	somaticseq_parallel.py --output-directory ${Sample}.somaticseq --genome-reference ${params.genome} --inclusion-region ${params.bedfile}.bed --threads 25 --algorithm xgboost  --dbsnp-vcf  /home/reference_genomes/dbSNPGATK/dbsnp_138.hg19.somatic.vcf single --bam-file ${finalBam} --varscan-vcf ${varscanVcf} --lofreq-vcf ${lofreqVcf} --strelka-vcf ${strelkaVcf} --sample-name ${Sample} --arbitrary-snvs ${Sample}_freebayes_cnvs_sort.vcf ${Sample}_platypus_cnvs_sort.vcf ${Sample}_haplotypecaller_cnvs_sort.vcf ${Sample}_deepvariant_cnvs_sort.vcf --arbitrary-indels ${Sample}_freebayes_indels_sort.vcf ${Sample}_platypus_indels_sort.vcf ${Sample}_haplotypecaller_indels_sort.vcf ${Sample}_deepvariant_indels_sort.vcf
 
 	${params.vcf_sorter_path} ${Sample}.somaticseq/Consensus.sSNV.vcf ${Sample}.somaticseq/somaticseq_snv.vcf
 	bgzip -c ${Sample}.somaticseq/somaticseq_snv.vcf > ${Sample}.somaticseq/somaticseq_snv.vcf.gz
@@ -351,30 +355,30 @@ process somaticSeq_run {
 
 	${params.bcftools_path} concat -a ${Sample}.somaticseq/somaticseq_snv.vcf.gz ${Sample}.somaticseq/somaticseq_indel.vcf.gz -o ${Sample}.somaticseq.vcf
 
-	sed -i 's/##INFO=<ID=VLK012,Number=6,Type=Integer,Description="Calling decision of the 6 algorithms: VarScan2, LoFreq, Strelka, SnvCaller_0, SnvCaller_1, SnvCaller_2">/##INFO=<ID=VLSFPH,Number=6,Type=String,Description="Calling decision of the 6 algorithms:  VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller">/g' ${Sample}.somaticseq.vcf
+	sed -i 's/##INFO=<ID=VLK0123,Number=7,Type=Integer,Description="Calling decision of the 7 algorithms: VarScan2, LoFreq, Strelka, SnvCaller_0, SnvCaller_1, SnvCaller_2, SnvCaller_3">/##INFO=<ID=VLSFPHD,Number=7,Type=String,Description="Calling decision of the 7 algorithms:  VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller, Deepvariant">/g' ${Sample}.somaticseq.vcf
 
-	sed -i 's/VLK012/VLSFPH/g' ${Sample}.somaticseq.vcf
+	sed -i 's/VLK0123/VLSFPHD/g' ${Sample}.somaticseq.vcf
 	cp ${Sample}.somaticseq.vcf ${PWD}/Final_Output/${Sample}/
 	# to extract vaf,af,alt and ref count
 	${params.extract_somatic_script_path} ${Sample}.somaticseq.vcf ${Sample}.extractedSomaticseq.txt
 	#adding vep
-	${params.vep_script_path} ${Sample}.somaticseq.vcf ${Sample}
-	${params.extract_velheader_script_path} ${Sample}_vep_delheaders.txt ${Sample}.extractedvepdelheaders.txt
+	#${params.vep_script_path} ${Sample}.somaticseq.vcf ${Sample}
+	#${params.extract_velheader_script_path} ${Sample}_vep_delheaders.txt ${Sample}.extractedvepdelheaders.txt
 
 	# for merging extracted somaticsseq and vepheaders
-	${params.mergeSomaticvep_script_path} ${Sample}.extractedSomaticseq.txt ${Sample}.extractedvepdelheaders.txt ${Sample}_somaticseq.vep.txt
+	#${params.mergeSomaticvep_script_path} ${Sample}.extractedSomaticseq.txt ${Sample}.extractedvepdelheaders.txt ${Sample}_somaticseq.vep.txt
 	#mv ${Sample}_vep_delheaders.txt ${Sample}_somaticseq.vep.txt
 
-	sed -i 's/SYMBOL/Gene/g' ${Sample}_somaticseq.vep.txt
+	#sed -i 's/SYMBOL/Gene/g' ${Sample}_somaticseq.vep.txt
 
 	#Annotating ${Sample}.somaticseq.vcf using annovar
-	perl ${params.annovarLatest_path}/convert2annovar.pl -format vcf4 ${Sample}.somaticseq.vcf --outfile ${Sample}.somaticseq.avinput --withzyg --includeinfo
+	#perl ${params.annovarLatest_path}/convert2annovar.pl -format vcf4 ${Sample}.somaticseq.vcf --outfile ${Sample}.somaticseq.avinput --withzyg --includeinfo
 	
-	perl ${params.annovarLatest_path}/table_annovar.pl ${Sample}.somaticseq.avinput --out ${Sample}.somaticseq --remove --protocol refGene,cytoBand,cosmic84,popfreq_all_20150413,avsnp150,intervar_20180118,1000g2015aug_all,clinvar_20170905 --operation g,r,f,f,f,f,f,f --buildver hg19 --nastring '-1' --otherinfo --csvout --thread 10 ${params.annovarLatest_path}/humandb/ --xreffile ${params.annovarLatest_path}/example/gene_fullxref.txt
+	#perl ${params.annovarLatest_path}/table_annovar.pl ${Sample}.somaticseq.avinput --out ${Sample}.somaticseq --remove --protocol refGene,cytoBand,cosmic84,popfreq_all_20150413,avsnp150,intervar_20180118,1000g2015aug_all,clinvar_20170905 --operation g,r,f,f,f,f,f,f --buildver hg19 --nastring '-1' --otherinfo --csvout --thread 10 ${params.annovarLatest_path}/humandb/ --xreffile ${params.annovarLatest_path}/example/gene_fullxref.txt
 
 	#extracting columns  Func.refGene,Gene.refGene,ExonicFunc.refGene,PopFreqMax,InterVar_automated from somaticseq.hg19_multianno.csv and adding them to somaticseq.vep.txt
-	python3 ${params.extract_annovar} ${Sample}.somaticseq.hg19_multianno.csv ${Sample}_somaticseq.vep.txt ${Sample}_somaticseq.vep_annonvar.txt
-	cp ${Sample}_somaticseq.vep_annonvar.txt ${PWD}/Final_Output/${Sample}/
+	#python3 ${params.extract_annovar} ${Sample}.somaticseq.hg19_multianno.csv ${Sample}_somaticseq.vep.txt ${Sample}_somaticseq.vep_annonvar.txt
+	#cp ${Sample}_somaticseq.vep_annonvar.txt ${PWD}/Final_Output/${Sample}/
 	"""
 } 
 
@@ -435,20 +439,18 @@ workflow WES {
 		RealignerTargetCreator(mark_duplicates.out)
 		IndelRealigner(RealignerTargetCreator.out.join(mark_duplicates.out)) | BaseRecalibrator
 		PrintReads(IndelRealigner.out.join(BaseRecalibrator.out)) | generatefinalbam
-		//minimap_getitd(generatefinalbam.out)
-		//coverage_mosdepth(generatefinalbam.out)
-		//hsmetrics_run(generatefinalbam.out)
-		//freebayes(generatefinalbam.out)
-		//haplotypecaller(generatefinalbam.out)
+		minimap_getitd(generatefinalbam.out)
+		coverage_mosdepth(generatefinalbam.out)
+		hsmetrics_run(generatefinalbam.out)
+		freebayes(generatefinalbam.out)
+		haplotypecaller(generatefinalbam.out)
 		deepvariant(generatefinalbam.out)
-		//strelka(generatefinalbam.out)
-		//platypus(generatefinalbam.out)
-		//vardict(generatefinalbam.out)
-		//varscan(generatefinalbam.out)
-		//lofreq(generatefinalbam.out)
-		//pindel(generatefinalbam.out)
-		//format_pindel(pindel.out.join(coverage_mosdepth.out))
-		//somaticSeq_run(lofreq.out.join(varscan.out.join(platypus.out.join(strelka.out.join(haplotypecaller.out.join(freebayes.out.join(generatefinalbam.out)))))))
+		strelka(generatefinalbam.out)
+		platypus(generatefinalbam.out)
+		varscan(generatefinalbam.out)
+		lofreq(generatefinalbam.out)
+		pindel(generatefinalbam.out)
+		somaticSeq_run(lofreq.out.join(varscan.out.join(platypus.out.join(strelka.out.join(haplotypecaller.out.join(freebayes.out.join(deepvariant.out.join(generatefinalbam.out))))))))
 		//cava(somaticSeq_run.out)
 		//merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
 }
