@@ -15,7 +15,7 @@ process fastqc{
 	output:
 		path "*"
 	"""
-	${params.fastqc} -o $PWD/Final_Output/${Sample}/ -f fastq ${params.sequences}/${Sample}_*R1_*.fastq.gz ${params.sequences}/${Sample}_*R2_*.fastq.gz
+	${params.fastqc} -o ./ -f fastq ${params.sequences}/${Sample}_*R1_*.fastq.gz ${params.sequences}/${Sample}_*R2_*.fastq.gz
 	"""
 }
 process trimming_trimmomatic { 
@@ -248,7 +248,7 @@ process vardict {
 
 process varscan {
 	input:
-		 tuple val (Sample), file (finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
+		tuple val (Sample), file (finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
 	output:
 		tuple val (Sample), file ("*.varscan.vcf")
 	script:
@@ -403,39 +403,55 @@ process merge_csv {
 	python3 ${params.merge_csvs_script} ${Sample} ${PWD}/Final_Output/${Sample}/${Sample}.xlsx  ${cavaCsv} $PWD/Final_Output/${Sample}/${Sample}_cov.mosdepth.summary.txt $PWD/Final_Output/${Sample}/${Sample}_cov.regions.bed $PWD/Final_Output/${Sample}/${Sample}_median50 ${pindelVep} ${somaticseqVep} Pharma.tsv 
 	sleep 1s
 	"""
+}
 
+process deepvariant {
+	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*.vcf'
+	input:
+		tuple val (Sample), file (finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
+	output:
+		tuple val (Sample), file ("*.vcf")
+	script:
+	"""
+	#echo `realpath ${params.genome} ${finalBam}`
+	genome_path=`realpath ${params.genome}`
+	bam_path=`realpath ${finalBam} | awk 'BEGIN{OFS=FS="/"} {\$NF=""; print \$0}'`
+	pwd=`realpath ./`
+	${params.deepvariant} \${bam_path} \${pwd} ${Sample}_deepvar.vcf ${finalBam} \${genome_path}
+	"""
 }
 
 workflow WES {
-
 	Channel
 		.fromPath(params.input)
-
 		.splitCsv(header:false)
 		.flatten()
 		.map{ it }
 		.set { samples_ch }
 
 	main:
-		//fastqc(samples_ch)
+		fastqc(samples_ch)
 		trimming_trimmomatic(samples_ch) | pair_assembly_pear | mapping_reads | sam_conversion | mark_duplicates
 		RealignerTargetCreator(mark_duplicates.out)
 		IndelRealigner(RealignerTargetCreator.out.join(mark_duplicates.out)) | BaseRecalibrator
 		PrintReads(IndelRealigner.out.join(BaseRecalibrator.out)) | generatefinalbam
-		minimap_getitd(generatefinalbam.out)
-		coverage_mosdepth(generatefinalbam.out)
-		hsmetrics_run(generatefinalbam.out)
-		freebayes(generatefinalbam.out)
-		haplotypecaller(generatefinalbam.out)
-		strelka(generatefinalbam.out)
-		platypus(generatefinalbam.out)
+		//minimap_getitd(generatefinalbam.out)
+		//coverage_mosdepth(generatefinalbam.out)
+		//hsmetrics_run(generatefinalbam.out)
+		//freebayes(generatefinalbam.out)
+		//haplotypecaller(generatefinalbam.out)
+		deepvariant(generatefinalbam.out)
+		//strelka(generatefinalbam.out)
+		//platypus(generatefinalbam.out)
 		//vardict(generatefinalbam.out)
-		varscan(generatefinalbam.out)
-		lofreq(generatefinalbam.out)
-		pindel(generatefinalbam.out)
+		//varscan(generatefinalbam.out)
+		//lofreq(generatefinalbam.out)
+		//pindel(generatefinalbam.out)
 		//format_pindel(pindel.out.join(coverage_mosdepth.out))
-		somaticSeq_run(lofreq.out.join(varscan.out.join(platypus.out.join(strelka.out.join(haplotypecaller.out.join(freebayes.out.join(generatefinalbam.out)))))))
-		cava(somaticSeq_run.out)
-		merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
-
+		//somaticSeq_run(lofreq.out.join(varscan.out.join(platypus.out.join(strelka.out.join(haplotypecaller.out.join(freebayes.out.join(generatefinalbam.out)))))))
+		//cava(somaticSeq_run.out)
+		//merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
+}
+workflow.onComplete {
+	log.info ( workflow.success ? "\n\nDone! Output in the 'Final_Output' directory \n" : "Oops .. something went wrong" )
 }
