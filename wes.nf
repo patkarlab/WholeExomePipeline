@@ -362,25 +362,37 @@ process somaticSeq_run {
 	# to extract vaf,af,alt and ref count
 	${params.extract_somatic_script_path} ${Sample}.somaticseq.vcf ${Sample}.extractedSomaticseq.txt
 	#adding vep
-	#${params.vep_script_path} ${Sample}.somaticseq.vcf ${Sample}
-	#${params.extract_velheader_script_path} ${Sample}_vep_delheaders.txt ${Sample}.extractedvepdelheaders.txt
+	${params.vep_script_path} ${Sample}.somaticseq.vcf ${Sample}
+	${params.extract_velheader_script_path} ${Sample}_vep_delheaders.txt ${Sample}.extractedvepdelheaders.txt
 
 	# for merging extracted somaticsseq and vepheaders
-	#${params.mergeSomaticvep_script_path} ${Sample}.extractedSomaticseq.txt ${Sample}.extractedvepdelheaders.txt ${Sample}_somaticseq.vep.txt
+	${params.mergeSomaticvep_script_path} ${Sample}.extractedSomaticseq.txt ${Sample}.extractedvepdelheaders.txt ${Sample}_somaticseq.vep.txt
 	#mv ${Sample}_vep_delheaders.txt ${Sample}_somaticseq.vep.txt
 
-	#sed -i 's/SYMBOL/Gene/g' ${Sample}_somaticseq.vep.txt
+	sed -i 's/SYMBOL/Gene/g' ${Sample}_somaticseq.vep.txt
 
 	#Annotating ${Sample}.somaticseq.vcf using annovar
-	#perl ${params.annovarLatest_path}/convert2annovar.pl -format vcf4 ${Sample}.somaticseq.vcf --outfile ${Sample}.somaticseq.avinput --withzyg --includeinfo
+	perl ${params.annovarLatest_path}/convert2annovar.pl -format vcf4 ${Sample}.somaticseq.vcf --outfile ${Sample}.somaticseq.avinput --withzyg --includeinfo
 	
-	#perl ${params.annovarLatest_path}/table_annovar.pl ${Sample}.somaticseq.avinput --out ${Sample}.somaticseq --remove --protocol refGene,cytoBand,cosmic84,popfreq_all_20150413,avsnp150,intervar_20180118,1000g2015aug_all,clinvar_20170905 --operation g,r,f,f,f,f,f,f --buildver hg19 --nastring '-1' --otherinfo --csvout --thread 10 ${params.annovarLatest_path}/humandb/ --xreffile ${params.annovarLatest_path}/example/gene_fullxref.txt
+	perl ${params.annovarLatest_path}/table_annovar.pl ${Sample}.somaticseq.avinput --out ${Sample}.somaticseq --remove --protocol refGene,cytoBand,cosmic84,popfreq_all_20150413,avsnp150,intervar_20180118,1000g2015aug_all,clinvar_20170905 --operation g,r,f,f,f,f,f,f --buildver hg19 --nastring '-1' --otherinfo --csvout --thread 10 ${params.annovarLatest_path}/humandb/ --xreffile ${params.annovarLatest_path}/example/gene_fullxref.txt
 
 	#extracting columns  Func.refGene,Gene.refGene,ExonicFunc.refGene,PopFreqMax,InterVar_automated from somaticseq.hg19_multianno.csv and adding them to somaticseq.vep.txt
-	#python3 ${params.extract_annovar} ${Sample}.somaticseq.hg19_multianno.csv ${Sample}_somaticseq.vep.txt ${Sample}_somaticseq.vep_annonvar.txt
-	#cp ${Sample}_somaticseq.vep_annonvar.txt ${PWD}/Final_Output/${Sample}/
+	python3 ${params.extract_annovar} ${Sample}.somaticseq.hg19_multianno.csv ${Sample}_somaticseq.vep.txt ${Sample}_somaticseq.vep_annonvar.txt
+	cp ${Sample}_somaticseq.vep_annonvar.txt ${PWD}/Final_Output/${Sample}/
 	"""
 } 
+
+process cnvnator {
+	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*_Cnvnator_calls.tsv'
+	input:
+		tuple val(Sample), file (finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
+	output:
+		tuple val(Sample), file ("*_Cnvnator_calls.tsv")
+	script:
+	"""
+	${params.cnvnator_path} ${finalBam} ./ ${Sample}
+	"""
+}
 
 process cava {
 	input:
@@ -451,8 +463,9 @@ workflow WES {
 		lofreq(generatefinalbam.out)
 		pindel(generatefinalbam.out)
 		somaticSeq_run(lofreq.out.join(varscan.out.join(platypus.out.join(strelka.out.join(haplotypecaller.out.join(freebayes.out.join(deepvariant.out.join(generatefinalbam.out))))))))
-		//cava(somaticSeq_run.out)
-		//merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
+		cnvnator(generatefinalbam.out)
+		cava(somaticSeq_run.out)
+		merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
 }
 workflow.onComplete {
 	log.info ( workflow.success ? "\n\nDone! Output in the 'Final_Output' directory \n" : "Oops .. something went wrong" )
