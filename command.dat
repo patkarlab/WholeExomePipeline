@@ -1,7 +1,0 @@
-for sample in $(cat file.txt); do    zcat ${sample}-Lymphoma_S*_R1_001.fastq.gz  ${sample}R-Lymphoma_S*_R1_001.fastq.gz | gzip -c > ${sample}_concat_Lymphoma_S1_R1_001.fastq.gz ;   zcat ${sample}-Lymphoma_S*_R2_001.fastq.gz  ${sample}R-Lymphoma_S*_R2_001.fastq.gz  | gzip -c > ${sample}_concat_Lymphoma_S1_R2_001.fastq.gz; done
-# for conccat 2 fastq files
-for sample in $(cat file.txt); do nohup zcat ${sample}-Lymphoma_S*_R1_001.fastq.gz  ${sample}R-Lymphoma_S*_R1_001.fastq.gz | gzip -c > ${sample}_concat_Lymphoma_S1_R1_001.fastq.gz & done
-for sample in $(cat file.txt); do nohup zcat ${sample}-Lymphoma_S*_R2_001.fastq.gz  ${sample}R-Lymphoma_S*_R2_001.fastq.gz | gzip -c > ${sample}_concat_Lymphoma_S1_R2_001.fastq.gz & done
-
-
-zcat file.fq.gz | paste - - - - | cut -f2 | wc -c

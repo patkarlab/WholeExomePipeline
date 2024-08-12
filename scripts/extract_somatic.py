@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
 import sys
 import csv
@@ -40,8 +40,10 @@ extracted_df['SomaticFlag'] = somatic_flags
 #to extract ref_count and alt_count from CD4
 format_column = vcf_df[9]
 cd4_values = format_column.str.split(':').str[2].str.split(',')
-ref_count = cd4_values.str[1]
-alt_count = cd4_values.str[3]
+ref_count = cd4_values.str[0].astype(int) + cd4_values.str[1].astype(int)
+alt_count = cd4_values.str[2].astype(int) + cd4_values.str[3].astype(int)
+
+#print (cd4_values.str[0], cd4_values.str[1], ref_count)
 
 extracted_df['ref_count'] = ref_count
 extracted_df['alt_count'] = alt_count
@@ -50,6 +52,7 @@ vaf_values = format_column.str.split(':').str[-1]  #extracting vaf valu and conv
 
 vaf_values = pd.to_numeric(vaf_values) * 100
 
+#print (vaf_values)
 #Add the VAF% values to the extracted DataFrame
 extracted_df['VAF%'] = vaf_values
 

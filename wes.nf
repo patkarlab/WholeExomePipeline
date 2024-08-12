@@ -55,6 +55,18 @@ process mapping_reads {
 	"""
 }
 
+process mapping_both_reads {
+	input:
+		tuple val (Sample), file(paired_forward), file(paired_reverse)
+	output:
+		tuple val (Sample), file ("*.sam")
+	script:
+	"""
+	bwa mem -R "@RG\\tID:AML\\tPL:ILLUMINA\\tLB:LIB-MIPS\\tSM:${Sample}\\tPI:200" -M -t 20 ${params.genome} ${paired_forward} ${paired_reverse} > ${Sample}.sam
+	"""
+}
+
+
 process sam_conversion {
 	input:
 		tuple val (Sample), file (samfile)
@@ -91,7 +103,7 @@ process RealignerTargetCreator {
 		tuple val (Sample), file ("*.intervals")
 	script:
 	"""
-	 ${params.java_path}/java -Xmx8G -jar ${params.GATK38_path} -T RealignerTargetCreator -R ${params.genome} -nt 10 -I ${bamFile} --known ${params.site1} -o ${Sample}_target.intervals
+	${params.java_path}/java -Xmx8G -jar ${params.GATK38_path} -T RealignerTargetCreator -R ${params.genome} -nt 10 -I ${bamFile} --known ${params.site1} -o ${Sample}_target.intervals
 	"""
 }
 
@@ -143,8 +155,24 @@ process generatefinalbam {
 	${params.samtools} sort ${Sample}.abra.bam > ${Sample}.final.bam
 	${params.samtools} index ${Sample}.final.bam > ${Sample}.final.bam.bai
 	"""
-
 }
+
+process generatefinalbamin {
+    publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*.final.bam*'
+    input:
+        val (Sample)
+    output:
+        tuple val(Sample), file ("*.final.bam"), file ("*.final.bam.bai"), file ("*.old_final.bam"), file ("*.old_final.bam.bai")
+    script:
+    """
+    ${params.java_path}/java -Xmx16G -jar ${params.abra2_path}/abra2-2.23.jar --in ${params.sequences}/${Sample}*.bam --out ${Sample}.abra.bam --ref ${params.genome} --threads 8 --tmpdir ./ > abra.log
+    ${params.samtools} sort ${params.sequences}/${Sample}*.bam > ${Sample}.old_final.bam
+    ${params.samtools} index ${Sample}.old_final.bam > ${Sample}.old_final.bam.bai
+    ${params.samtools} sort ${Sample}.abra.bam > ${Sample}.final.bam
+    ${params.samtools} index ${Sample}.final.bam > ${Sample}.final.bam.bai
+    """
+}
+
 process hsmetrics_run{
 	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*_hsmetrics.txt'
 	input:
@@ -379,6 +407,7 @@ process somaticSeq_run {
 	#extracting columns  Func.refGene,Gene.refGene,ExonicFunc.refGene,PopFreqMax,InterVar_automated from somaticseq.hg19_multianno.csv and adding them to somaticseq.vep.txt
 	python3 ${params.extract_annovar} ${Sample}.somaticseq.hg19_multianno.csv ${Sample}_somaticseq.vep.txt ${Sample}_somaticseq.vep_annonvar.txt
 	cp ${Sample}_somaticseq.vep_annonvar.txt ${PWD}/Final_Output/${Sample}/
+	
 	"""
 } 
 
@@ -451,6 +480,64 @@ workflow WES {
 		RealignerTargetCreator(mark_duplicates.out)
 		IndelRealigner(RealignerTargetCreator.out.join(mark_duplicates.out)) | BaseRecalibrator
 		PrintReads(IndelRealigner.out.join(BaseRecalibrator.out)) | generatefinalbam
+		//minimap_getitd(generatefinalbam.out)
+		//coverage_mosdepth(generatefinalbam.out)
+		//hsmetrics_run(generatefinalbam.out)
+		//freebayes(generatefinalbam.out)
+		//haplotypecaller(generatefinalbam.out)
+		//deepvariant(generatefinalbam.out)
+		//strelka(generatefinalbam.out)
+		//platypus(generatefinalbam.out)
+		//varscan(generatefinalbam.out)
+		//lofreq(generatefinalbam.out)
+		//pindel(generatefinalbam.out)
+		//somaticSeq_run(lofreq.out.join(varscan.out.join(platypus.out.join(strelka.out.join(haplotypecaller.out.join(freebayes.out.join(deepvariant.out.join(generatefinalbam.out))))))))
+		//cnvnator(generatefinalbam.out)
+		//cava(somaticSeq_run.out)
+		//merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
+}
+
+workflow WES_BAMIN {
+	Channel
+		.fromPath(params.input)
+		.splitCsv(header:false)
+		.flatten()
+		.map{ it }
+		.set { samples_ch }
+
+	main:
+		generatefinalbamin(samples_ch)
+		minimap_getitd(generatefinalbamin.out)
+		coverage_mosdepth(generatefinalbamin.out)
+		hsmetrics_run(generatefinalbamin.out)
+		freebayes(generatefinalbamin.out)
+		haplotypecaller(generatefinalbamin.out)
+		deepvariant(generatefinalbamin.out)
+		strelka(generatefinalbamin.out)
+		platypus(generatefinalbamin.out)
+		varscan(generatefinalbamin.out)
+		lofreq(generatefinalbamin.out)
+		pindel(generatefinalbamin.out)
+		somaticSeq_run(lofreq.out.join(varscan.out.join(platypus.out.join(strelka.out.join(haplotypecaller.out.join(freebayes.out.join(deepvariant.out.join(generatefinalbamin.out))))))))
+		cnvnator(generatefinalbamin.out)
+		cava(somaticSeq_run.out)
+		merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
+}
+
+workflow WES_NOPAIR {
+	Channel
+		.fromPath(params.input)
+		.splitCsv(header:false)
+		.flatten()
+		.map{ it }
+		.set { samples_ch }
+
+	main:
+		fastqc(samples_ch)
+		trimming_trimmomatic(samples_ch) | mapping_both_reads | sam_conversion | mark_duplicates
+		RealignerTargetCreator(mark_duplicates.out)
+		IndelRealigner(RealignerTargetCreator.out.join(mark_duplicates.out)) | BaseRecalibrator
+		PrintReads(IndelRealigner.out.join(BaseRecalibrator.out)) | generatefinalbam
 		minimap_getitd(generatefinalbam.out)
 		coverage_mosdepth(generatefinalbam.out)
 		hsmetrics_run(generatefinalbam.out)
@@ -467,6 +554,7 @@ workflow WES {
 		cava(somaticSeq_run.out)
 		merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
 }
+
 workflow.onComplete {
 	log.info ( workflow.success ? "\n\nDone! Output in the 'Final_Output' directory \n" : "Oops .. something went wrong" )
 }
