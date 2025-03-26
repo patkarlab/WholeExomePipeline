@@ -16,22 +16,18 @@ vcf_df = pd.read_csv(vcf_file, sep='\t', comment='#', header=None)
 extracted_df = vcf_df.iloc[:, :5]
 
 # to extract variantcaller tool
-
-vlsfph_values = vcf_df[7].apply(lambda x: x.split('VLSFPHD=')[1].split(';')[0].split(','))
+vlsfph_values = vcf_df[7].apply(lambda x: x.split('VLSFPH=')[1].split(';')[0].split(','))
+varcallers = ['VarScan2', 'LoFreq', 'Strelka', 'Freebayes', 'Platypus', 'Haplotypecaller']
 Variant_callers = []
 for values in vlsfph_values:
-    callers = []
-    for i, value in enumerate(values):
-        if i < len(['VarScan2', 'LoFreq', 'Strelka', 'Freebayes', 'Platypus', 'Haplotypecaller', 'Deepvariant']):
-            if value == '1':
-                callers.append(['VarScan2', 'LoFreq', 'Strelka', 'Freebayes', 'Platypus', 'Haplotypecaller', 'Deepvariant'][i])
-    Variant_callers.append(", ".join(callers))
-
+	callers = []
+	for i, value in enumerate(values):
+		if value == '1':
+			callers.append(varcallers[i])
+	Variant_callers.append(", ".join(callers))
 
 extracted_df['Variant_callers'] = Variant_callers
-
 # Extract somatic values from the INFO column
-
 somatic_flags = vcf_df[7].apply(lambda x: 'SOMATIC' if 'SOMATIC' in x else '')
 
 # Add the "somaticflag" column to the extracted DataFrame
@@ -49,15 +45,12 @@ extracted_df['ref_count'] = ref_count
 extracted_df['alt_count'] = alt_count
 
 vaf_values = format_column.str.split(':').str[-1]  #extracting vaf valu and converting it into percentage
-
 vaf_values = pd.to_numeric(vaf_values) * 100
 
-#print (vaf_values)
 #Add the VAF% values to the extracted DataFrame
 extracted_df['VAF%'] = vaf_values
 
 # Set column names
 extracted_df.columns = ['CHROM', 'POS', 'ID', 'REF', 'ALT', 'Variant_callers', 'SomaticFlag','ref_count', 'alt_count', 'VAF%']
-
+extracted_df = extracted_df[extracted_df['Variant_callers'] != '']	# This helps to remove variants which somaticseq is not confident
 extracted_df.to_csv(outputFile, sep =',', header=True, index=False)
-

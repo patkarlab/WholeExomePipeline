@@ -13,6 +13,7 @@ mosCOV50_path = sys.argv[6]
 pindel_path = sys.argv[7]
 somaticseq_path = sys.argv[8]
 pharma = sys.argv[9]
+deepvariant = sys.argv[10]
 
 csvfilenames = [ ]
 
@@ -23,6 +24,7 @@ mosCOV50_df = pd.read_csv(mosCOV50_path, sep='\t')
 pindel_df = pd.read_csv(pindel_path, sep='\t')
 somaticseq_df = pd.read_csv(somaticseq_path, sep='\t')
 pharma_df = pd.read_csv(pharma, sep='\t')
+deepvar_df = pd.read_csv(deepvariant, sep = '\t')
 
 # Create a new Excel writer
 writer = pd.ExcelWriter(outfile)
@@ -35,6 +37,7 @@ mosCOV50_df.to_excel(writer, sheet_name='mosCOV50', index=False)
 pindel_df.to_excel(writer, sheet_name='pindel', index=False)
 somaticseq_df.to_excel(writer, sheet_name='somaticseq', index=False)
 pharma_df.to_excel(writer, sheet_name='pharma_marker', index=False)
+deepvar_df.to_excel(writer, sheet_name='deepvariant', index=False) 
 
 # Save the Excel file
 writer.save()

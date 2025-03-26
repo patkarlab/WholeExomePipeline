@@ -6,9 +6,12 @@ YOUR_OUTPUT_DIR=$2
 YOUR_OUTPUT_VCF=$3
 YOUR_BAM=$4
 genome=$5
+bedfile=$6
 
 genome_name=$(basename ${genome})
 genome_location=$(echo ${genome} | awk 'BEGIN{OFS=FS="/"} {$NF=""; print $0}')
+bedfile_location=$(dirname ${bedfile})
+bedfile_name=$(basename ${bedfile})
 #echo "${genome_name} ${genome_location}"
 
 #docker run \
@@ -28,4 +31,4 @@ genome_location=$(echo ${genome} | awk 'BEGIN{OFS=FS="/"} {$NF=""; print $0}')
 #  --par_regions_bed="/input/GRCh3X_par.bed" \ **Optional. If --haploid_contigs is set, then this can be used to provide PAR regions to be excluded from genotype adjustment. Download links to this files are available in this page.
  # --dry_run=false **Default is false. If set to true, commands will be printed out but not executed.
 
-docker run -v ${YOUR_INPUT_DIR}:"/input" -v ${YOUR_OUTPUT_DIR}:"/output" -v ${genome_location}:"/genome_dir" google/deepvariant:"${BIN_VERSION}" /opt/deepvariant/bin/run_deepvariant --model_type=WES --ref=/genome_dir/${genome_name} --reads=/input/${YOUR_BAM} --output_vcf=/output/${YOUR_OUTPUT_VCF} --num_shards=16
+docker run -v ${YOUR_INPUT_DIR}:"/input" -v ${YOUR_OUTPUT_DIR}:"/output" -v ${genome_location}:"/genome_dir" -v ${bedfile_location}:"/bedfile"  google/deepvariant:"${BIN_VERSION}" /opt/deepvariant/bin/run_deepvariant --model_type=WES --ref=/genome_dir/${genome_name} --regions=/bedfile/${bedfile_name} --reads=/input/${YOUR_BAM} --output_vcf=/output/${YOUR_OUTPUT_VCF} --num_shards=16
