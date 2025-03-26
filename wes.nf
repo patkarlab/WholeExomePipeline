@@ -18,6 +18,7 @@ process fastqc{
 	${params.fastqc} -o ./ -f fastq ${params.sequences}/${Sample}_*R1_*.fastq.gz ${params.sequences}/${Sample}_*R2_*.fastq.gz
 	"""
 }
+
 process trimming_trimmomatic { 
 	input:
 		val Sample
@@ -65,7 +66,6 @@ process mapping_both_reads {
 	bwa mem -R "@RG\\tID:AML\\tPL:ILLUMINA\\tLB:LIB-MIPS\\tSM:${Sample}\\tPI:200" -M -t 20 ${params.genome} ${paired_forward} ${paired_reverse} > ${Sample}.sam
 	"""
 }
-
 
 process sam_conversion {
 	input:
@@ -158,19 +158,19 @@ process generatefinalbam {
 }
 
 process generatefinalbamin {
-    publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*.final.bam*'
-    input:
-        val (Sample)
-    output:
-        tuple val(Sample), file ("*.final.bam"), file ("*.final.bam.bai"), file ("*.old_final.bam"), file ("*.old_final.bam.bai")
-    script:
-    """
-    ${params.java_path}/java -Xmx16G -jar ${params.abra2_path}/abra2-2.23.jar --in ${params.sequences}/${Sample}*.bam --out ${Sample}.abra.bam --ref ${params.genome} --threads 8 --tmpdir ./ > abra.log
-    ${params.samtools} sort ${params.sequences}/${Sample}*.bam > ${Sample}.old_final.bam
-    ${params.samtools} index ${Sample}.old_final.bam > ${Sample}.old_final.bam.bai
-    ${params.samtools} sort ${Sample}.abra.bam > ${Sample}.final.bam
-    ${params.samtools} index ${Sample}.final.bam > ${Sample}.final.bam.bai
-    """
+	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*.final.bam*'
+	input:
+		val (Sample)
+	output:
+		tuple val(Sample), file ("*.final.bam"), file ("*.final.bam.bai"), file ("*.old_final.bam"), file ("*.old_final.bam.bai")
+	script:
+	"""
+	${params.java_path}/java -Xmx16G -jar ${params.abra2_path}/abra2-2.23.jar --in ${params.sequences}/${Sample}*.bam --out ${Sample}.abra.bam --ref ${params.genome} --threads 8 --tmpdir ./ > abra.log
+	${params.samtools} sort ${params.sequences}/${Sample}*.bam > ${Sample}.old_final.bam
+	${params.samtools} index ${Sample}.old_final.bam > ${Sample}.old_final.bam.bai
+	${params.samtools} sort ${Sample}.abra.bam > ${Sample}.final.bam
+	${params.samtools} index ${Sample}.final.bam > ${Sample}.final.bam.bai
+	"""
 }
 
 process hsmetrics_run{
@@ -346,21 +346,21 @@ process lofreq {
 }
 
 process somaticSeq_run {
+	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*_somaticseq.vep_annonvar.txt'
+	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '${Sample}.somaticseq.vcf'
 	input:
-		tuple val (Sample), file (lofreqVcf), file (varscanVcf), file (platypusVcf), file (strelkaVcf), file (haplotypecallerVcf), file (freebayesVcf), file (deepvariantVcf), file(finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
+		tuple val (Sample), file (lofreqVcf), file (varscanVcf), file (platypusVcf), file (strelkaVcf), file (haplotypecallerVcf), file (freebayesVcf), file(finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
 	output:
-		tuple val (Sample), file ("*_somaticseq.vep_annonvar.txt")
+		tuple val (Sample), file ("*_somaticseq.vep_annonvar.txt"), file("${Sample}.somaticseq.vcf")
 	script:
 	"""
 	${params.vcf_sorter_path} ${freebayesVcf} ${Sample}.freebayes.sorted.vcf
 	${params.vcf_sorter_path} ${platypusVcf} ${Sample}.platypus.sorted.vcf
 	${params.vcf_sorter_path} ${haplotypecallerVcf} ${Sample}.haplotypecaller.sorted.vcf
-	${params.vcf_sorter_path} ${deepvariantVcf} ${Sample}.deepvariant.sorted.vcf
 
 	python3 ${params.splitvcf_path} -infile ${Sample}.platypus.sorted.vcf -snv ${Sample}_platypus_cnvs.vcf -indel ${Sample}_platypus_indels.vcf
 	python3 ${params.splitvcf_path} -infile ${Sample}.freebayes.sorted.vcf -snv ${Sample}_freebayes_cnvs.vcf -indel ${Sample}_freebayes_indels.vcf
 	python3 ${params.splitvcf_path} -infile ${Sample}.haplotypecaller.sorted.vcf -snv ${Sample}_haplotypecaller_cnvs.vcf -indel ${Sample}_haplotypecaller_indels.vcf
-	python3 ${params.splitvcf_path} -infile ${Sample}.deepvariant.sorted.vcf -snv ${Sample}_deepvariant_cnvs.vcf -indel ${Sample}_deepvariant_indels.vcf
 
 	${params.vcf_sorter_path} ${Sample}_platypus_cnvs.vcf ${Sample}_platypus_cnvs_sort.vcf
 	${params.vcf_sorter_path} ${Sample}_platypus_indels.vcf ${Sample}_platypus_indels_sort.vcf
@@ -368,10 +368,8 @@ process somaticSeq_run {
 	${params.vcf_sorter_path} ${Sample}_freebayes_indels.vcf ${Sample}_freebayes_indels_sort.vcf
 	${params.vcf_sorter_path} ${Sample}_haplotypecaller_cnvs.vcf ${Sample}_haplotypecaller_cnvs_sort.vcf
 	${params.vcf_sorter_path} ${Sample}_haplotypecaller_indels.vcf ${Sample}_haplotypecaller_indels_sort.vcf
-	${params.vcf_sorter_path} ${Sample}_deepvariant_cnvs.vcf ${Sample}_deepvariant_cnvs_sort.vcf
-	${params.vcf_sorter_path} ${Sample}_deepvariant_indels.vcf ${Sample}_deepvariant_indels_sort.vcf
 
-	somaticseq_parallel.py --output-directory ${Sample}.somaticseq --genome-reference ${params.genome} --inclusion-region ${params.bedfile}.bed --threads 25 --pass-threshold 0 --lowqual-threshold 0 --algorithm xgboost -minMQ 0 -minBQ 0 -mincaller 0 --dbsnp-vcf /home/reference_genomes/dbSNPGATK/dbsnp_138.hg19.somatic.vcf single --bam-file ${finalBam} --varscan-vcf ${varscanVcf} --lofreq-vcf ${lofreqVcf} --strelka-vcf ${strelkaVcf} --sample-name ${Sample} --arbitrary-snvs ${Sample}_freebayes_cnvs_sort.vcf ${Sample}_platypus_cnvs_sort.vcf ${Sample}_haplotypecaller_cnvs_sort.vcf ${Sample}_deepvariant_cnvs_sort.vcf --arbitrary-indels ${Sample}_freebayes_indels_sort.vcf ${Sample}_platypus_indels_sort.vcf ${Sample}_haplotypecaller_indels_sort.vcf ${Sample}_deepvariant_indels_sort.vcf
+	somaticseq_parallel.py --output-directory ${Sample}.somaticseq --genome-reference ${params.genome} --inclusion-region ${params.bedfile}.bed --threads 25 --pass-threshold 0 --lowqual-threshold 0 --algorithm xgboost -minMQ 0 -minBQ 0 -mincaller 0 --dbsnp-vcf /home/reference_genomes/dbSNPGATK/dbsnp_138.hg19.somatic.vcf single --bam-file ${finalBam} --varscan-vcf ${varscanVcf} --lofreq-vcf ${lofreqVcf} --strelka-vcf ${strelkaVcf} --sample-name ${Sample} --arbitrary-snvs ${Sample}_freebayes_cnvs_sort.vcf ${Sample}_platypus_cnvs_sort.vcf ${Sample}_haplotypecaller_cnvs_sort.vcf --arbitrary-indels ${Sample}_freebayes_indels_sort.vcf ${Sample}_platypus_indels_sort.vcf ${Sample}_haplotypecaller_indels_sort.vcf
 
 	${params.vcf_sorter_path} ${Sample}.somaticseq/Consensus.sSNV.vcf ${Sample}.somaticseq/somaticseq_snv.vcf
 	bgzip -c ${Sample}.somaticseq/somaticseq_snv.vcf > ${Sample}.somaticseq/somaticseq_snv.vcf.gz
@@ -383,31 +381,26 @@ process somaticSeq_run {
 
 	${params.bcftools_path} concat -a ${Sample}.somaticseq/somaticseq_snv.vcf.gz ${Sample}.somaticseq/somaticseq_indel.vcf.gz -o ${Sample}.somaticseq.vcf
 
-	sed -i 's/##INFO=<ID=VLK0123,Number=7,Type=Integer,Description="Calling decision of the 7 algorithms: VarScan2, LoFreq, Strelka, SnvCaller_0, SnvCaller_1, SnvCaller_2, SnvCaller_3">/##INFO=<ID=VLSFPHD,Number=7,Type=String,Description="Calling decision of the 7 algorithms:  VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller, Deepvariant">/g' ${Sample}.somaticseq.vcf
-
-	sed -i 's/VLK0123/VLSFPHD/g' ${Sample}.somaticseq.vcf
-	cp ${Sample}.somaticseq.vcf ${PWD}/Final_Output/${Sample}/
+	sed -i 's/##INFO=<ID=VLK012,Number=6,Type=Integer,Description="Calling decision of the 6 algorithms: VarScan2, LoFreq, Strelka, SnvCaller_0, SnvCaller_1, SnvCaller_2">/##INFO=<ID=VLSFPH,Number=6,Type=String,Description="Calling decision of the 6 algorithms:  VarScan2, LoFreq, Strelka, Freebayes, Platypus, Haplotypecaller">/g' ${Sample}.somaticseq.vcf
+	sed -i 's/VLK012/VLSFPH/g' ${Sample}.somaticseq.vcf
+	
 	# to extract vaf,af,alt and ref count
 	${params.extract_somatic_script_path} ${Sample}.somaticseq.vcf ${Sample}.extractedSomaticseq.txt
 	#adding vep
 	${params.vep_script_path} ${Sample}.somaticseq.vcf ${Sample}
 	${params.extract_velheader_script_path} ${Sample}_vep_delheaders.txt ${Sample}.extractedvepdelheaders.txt
-
+	
 	# for merging extracted somaticsseq and vepheaders
 	${params.mergeSomaticvep_script_path} ${Sample}.extractedSomaticseq.txt ${Sample}.extractedvepdelheaders.txt ${Sample}_somaticseq.vep.txt
-	#mv ${Sample}_vep_delheaders.txt ${Sample}_somaticseq.vep.txt
-
 	sed -i 's/SYMBOL/Gene/g' ${Sample}_somaticseq.vep.txt
-
+	
 	#Annotating ${Sample}.somaticseq.vcf using annovar
 	perl ${params.annovarLatest_path}/convert2annovar.pl -format vcf4 ${Sample}.somaticseq.vcf --outfile ${Sample}.somaticseq.avinput -withfreq --includeinfo -allsample
 	
 	perl ${params.annovarLatest_path}/table_annovar.pl ${Sample}.somaticseq.avinput --out ${Sample}.somaticseq --remove --protocol refGene,cytoBand,cosmic84,popfreq_all_20150413,avsnp150,intervar_20180118,1000g2015aug_all,clinvar_20170905 --operation g,r,f,f,f,f,f,f --buildver hg19 --nastring '-1' --otherinfo --csvout --thread 10 ${params.annovarLatest_path}/humandb/ --xreffile ${params.annovarLatest_path}/example/gene_fullxref.txt
-
+	
 	#extracting columns  Func.refGene,Gene.refGene,ExonicFunc.refGene,PopFreqMax,InterVar_automated from somaticseq.hg19_multianno.csv and adding them to somaticseq.vep.txt
 	python3 ${params.extract_annovar} ${Sample}.somaticseq.hg19_multianno.csv ${Sample}_somaticseq.vep.txt ${Sample}_somaticseq.vep_annonvar.txt
-	cp ${Sample}_somaticseq.vep_annonvar.txt ${PWD}/Final_Output/${Sample}/
-	
 	"""
 } 
 
@@ -425,13 +418,12 @@ process cnvnator {
 
 process cava {
 	input:
-		tuple val(Sample), file (somaticVcf)
-
+		tuple val(Sample), file(somaticseqVepAnnovar), file (somaticVcf)
 	output:
 		tuple val(Sample), file ("*.cava.csv")
 	script:
 	"""
-	${params.cava_path}/cava -c ${params.cava_path}/config_v2.txt -t 10 -i ${PWD}/Final_Output/${Sample}/${Sample}.somaticseq.vcf -o ${Sample}.somaticseq
+	${params.cava_path}/cava -c ${params.cava_path}/config_v2.txt -t 10 -i ${somaticVcf} -o ${Sample}.somaticseq
 	python3 ${params.cava_script_path} ${Sample}.somaticseq.txt ${Sample}.cava.csv
 	"""
 }
@@ -439,13 +431,13 @@ process cava {
 process merge_csv {
 	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*.xlsx'
 	input:
-		tuple val (Sample), file (pindelVep), file (somaticseqVep), file (cavaCsv)
+		tuple val (Sample), file (pindelVep), file (somaticseqVep), file (somaticVcf), file (DeepVarOut), file (DeepVarVcf), file (cavaCsv)
 	output:
 		val Sample
 	script:
 	"""
 	python3 ${params.pharma_marker_script} $PWD/Final_Output/${Sample}/${Sample}_somaticseq.vep_annonvar.txt ${params.pharma_input_xlxs} Pharma.tsv
-	python3 ${params.merge_csvs_script} ${Sample} ${PWD}/Final_Output/${Sample}/${Sample}.xlsx  ${cavaCsv} $PWD/Final_Output/${Sample}/${Sample}_cov.mosdepth.summary.txt $PWD/Final_Output/${Sample}/${Sample}_cov.regions.bed $PWD/Final_Output/${Sample}/${Sample}_median50 ${pindelVep} ${somaticseqVep} Pharma.tsv 
+	python3 ${params.merge_csvs_script} ${Sample} ${PWD}/Final_Output/${Sample}/${Sample}.xlsx  ${cavaCsv} $PWD/Final_Output/${Sample}/${Sample}_cov.mosdepth.summary.txt $PWD/Final_Output/${Sample}/${Sample}_cov.regions.bed $PWD/Final_Output/${Sample}/${Sample}_median50 ${pindelVep} ${somaticseqVep} Pharma.tsv ${DeepVarOut}
 	sleep 1s
 	"""
 }
@@ -455,14 +447,94 @@ process deepvariant {
 	input:
 		tuple val (Sample), file (finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
 	output:
-		tuple val (Sample), file ("*.vcf")
+		tuple val (Sample), file ("${Sample}_deepvar_vep_annonvar.txt"), file("${Sample}_deepvar_filt.vcf")
 	script:
 	"""
-	#echo `realpath ${params.genome} ${finalBam}`
 	genome_path=`realpath ${params.genome}`
 	bam_path=`realpath ${finalBam} | awk 'BEGIN{OFS=FS="/"} {\$NF=""; print \$0}'`
 	pwd=`realpath ./`
-	${params.deepvariant} \${bam_path} \${pwd} ${Sample}_deepvar.vcf ${finalBam} \${genome_path}
+	${params.deepvariant} \${bam_path} \${pwd} ${Sample}_deepvar.vcf ${finalBam} \${genome_path} ${params.bedfile}.bed
+	${params.bcftools_path} view -f PASS ${Sample}_deepvar.vcf > ${Sample}_deepvar_filt.vcf
+	# Combining data from vcf and vep annotation data
+	${params.vep_wrapper} ${Sample} ${Sample}_deepvar_filt.vcf ${Sample}_deepvariant.txt
+
+	#Annotating ${Sample}.somaticseq.vcf using annovar
+	${params.annovar_wrapper} ${params.annovarLatest_path} ${Sample}_deepvar_filt.vcf ${Sample}
+
+	#extracting columns  Func.refGene,Gene.refGene,ExonicFunc.refGene,PopFreqMax,InterVar_automated from somaticseq.hg19_multianno.csv and adding them to somaticseq.vep.txt
+	python3 ${params.deepvar_annovar} ${Sample}.annovar.hg19_multianno.csv ${Sample}_deepvariant.txt ${Sample}_deepvar_vep_annonvar.txt
+	"""
+}
+
+process ifcnv_run {
+	conda '/home/miniconda3/envs/new_base/'
+	input:
+		val Sample
+	output:
+		//tuple val (Sample), file ("*.html"), file ("*.tsv")
+		val (Sample)
+	script:
+	"""
+	${params.links} $PWD/Final_Output/ ${params.input}
+	mkdir ifCNV
+	${params.ifcnv} ./ ${params.bedfile}.bed ifCNV
+
+	# Making ifCNV's output directory for each sample
+	for i in `cat ${params.input}`
+	do
+		if [ ! -d $PWD/Final_Output/\${i}/ifCNV ]; then
+			mkdir $PWD/Final_Output/\${i}/ifCNV
+		fi		
+	done
+
+	# Copying output of ifCNV to respective samples
+	if [ -f ifCNV/ifCNV.tsv ]; then
+		for i in `awk 'NR>1{print \$3}' ifCNV/ifCNV.tsv | awk 'BEGIN{FS="."}{print \$1}' | sort | uniq`	
+		do
+			cp ifCNV/\${i}.*.html $PWD/Final_Output/\${i}/ifCNV/	
+		done
+	fi
+	"""
+}
+
+process GermlineCNVAnalysis {
+	conda '/home/diagnostics/.conda/envs/gatk'
+	input:
+		tuple val (Sample), file (finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
+	
+	output:
+		tuple val (Sample), file("*-genotyped-intervals.vcf.gz"), file("*-genotyped-segments.vcf.gz"), file ("*-denoised-copy-ratios.tsv")
+	
+	script:
+	"""
+	# CollectReadCounts
+	${params.gatk_path} CollectReadCounts -L ${params.preprocessed_intervals} -R ${params.genome} -imr OVERLAPPING_ONLY -I ${finalBam} --format TSV -O ${Sample}.tsv
+	
+	# DetermineGermlineContigPloidy_case
+	${params.gatk_path} DetermineGermlineContigPloidy --model ${params.ploidy_model} -I ${Sample}.tsv -O . --output-prefix ${Sample}-ploidy --verbosity DEBUG
+	
+	# GermlineCNVCaller_case
+	${params.gatk_path} GermlineCNVCaller --run-mode CASE -I ${Sample}.tsv --contig-ploidy-calls ${Sample}-ploidy-calls --model ${params.cohort_model} --output ${Sample}_gCNV --output-prefix ${Sample} --verbosity DEBUG
+	
+	# PostprocessGermlineCNVCalls
+	${params.gatk_path} PostprocessGermlineCNVCalls --model-shard-path ${params.cohort_model} --calls-shard-path ${Sample}_gCNV/${Sample}-calls --allosomal-contig chrX --allosomal-contig chrY --contig-ploidy-calls ${Sample}-ploidy-calls --sample-index 0 --output-genotyped-intervals ${Sample}-genotyped-intervals.vcf.gz --output-genotyped-segments ${Sample}-genotyped-segments.vcf.gz --sequence-dictionary /home/reference_genomes/hg19_broad/hg19_all.dict --output-denoised-copy-ratios ${Sample}-denoised-copy-ratios.tsv
+	"""
+}
+
+process deepvariant_gCNV {
+	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*.vcf'
+	input:
+		tuple val (Sample), file (DeepVarOut), file (DeepVarVcf), file(genotypedIntervals), file (genotypedSegments), file(copyRatios)
+
+	output:
+		tuple val (Sample), file("${Sample}_deepvar_gCNV_merged.vcf")
+
+	script:
+	"""
+	bgzip ${DeepVarVcf} 
+	bcftools index ${DeepVarVcf}.gz
+	bcftools index ${genotypedSegments}
+	bcftools concat -a ${genotypedSegments} ${DeepVarVcf}.gz -o ${Sample}_deepvar_gCNV_merged.vcf	
 	"""
 }
 
@@ -504,23 +576,25 @@ workflow WES_BAMIN {
 		.flatten()
 		.map{ it }
 		.set { samples_ch }
-
 	main:
 		generatefinalbamin(samples_ch)
 		minimap_getitd(generatefinalbamin.out)
 		coverage_mosdepth(generatefinalbamin.out)
 		hsmetrics_run(generatefinalbamin.out)
 		freebayes(generatefinalbamin.out)
-		haplotypecaller(generatefinalbamin.out)
+		haplotypecaller(generatefinalbamin.out)	
 		deepvariant(generatefinalbamin.out)
 		strelka(generatefinalbamin.out)
 		platypus(generatefinalbamin.out)
 		varscan(generatefinalbamin.out)
 		lofreq(generatefinalbamin.out)
 		pindel(generatefinalbamin.out)
-		somaticSeq_run(lofreq.out.join(varscan.out.join(platypus.out.join(strelka.out.join(haplotypecaller.out.join(freebayes.out.join(deepvariant.out.join(generatefinalbamin.out))))))))
+		ifcnv_run(generatefinalbamin.out.collect())
+		somaticSeq_run(lofreq.out.join(varscan.out.join(platypus.out.join(strelka.out.join(haplotypecaller.out.join(freebayes.out.join(generatefinalbamin.out)))))))
+		GermlineCNVAnalysis(generatefinalbamin.out)		
+		deepvariant_gCNV(deepvariant.out.join(GermlineCNVAnalysis.out))
 		cava(somaticSeq_run.out)
-		merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
+		merge_csv(pindel.out.join(somaticSeq_run.out.join(deepvariant.out.join(cava.out))))
 }
 
 workflow WES_NOPAIR {
