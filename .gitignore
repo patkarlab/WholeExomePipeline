@@ -1,0 +1,6 @@
+*.log
+.nextflow.log*
+.nextflow/
+.nextflow.pid
+sample_list.csv
+Final_Output*
