@@ -1,0 +1,26 @@
+source activate cnvkit
+
+#Creating targets.bed
+cnvkit.py target /home/diagnostics/pipelines/WholeExomePipeline/bedfiles/lymphoma_probes_21102022_sortd.bed -o targets.bed
+
+#Download Accessible regions file for hg19 from cnvkit's GitHub repo >>> "access-5k-mappable.hg19.bed"
+
+#Creating antitargets.bed
+cnvkit.py antitarget targets.bed -g access-5k-mappable.hg19.bed -o antitargets.bed
+
+#Creating flat reference
+cnvkit.py reference -o FlatReference.cnn -f /home/reference_genomes/hg19_broad/hg19_all.fasta -t targets.bed -a antitargets.bed
+
+#Running CNVkit
+for i in `cat /home/diagnostics/pipelines/WholeExomePipeline/sample_list.csv`; do nohup cnvkit.py batch /home/diagnostics/pipelines/WholeExomePipeline/Final_Output_Lymphoma_new/$i/$i.final.bam -r FlatReference.cnn -m hybrid --drop-low-coverage --output-dir /home/diagnostics/pipelines/WholeExomePipeline/Final_Output_Lymphoma_new/cnvkit_lymphoma/ --diagram --scatter &  done
+
+#ChromosomeWise plotting
+for i in `cat /home/diagnostics/pipelines/WholeExomePipeline/sample_list.csv`; do nohup ./custom_scatter_chrwise.py chrwise_lymphoma.txt ./home/diagnostics/pipelines/WholeExomePipeline/Final_Output_Lymphoma_new/cnvkit_lymphoma/$i.final.cnr /home/diagnostics/pipelines/WholeExomePipeline/Final_Output_Lymphoma_new/cnvkit_lymphoma/$i.final.cns /home/diagnostics/pipelines/WholeExomePipeline/Final_Output_Lymphoma_new/cnvkit_lymphoma/chrwise_pdf/${i}_chr_ &  done
+
+
+############### Plotting 70 probes per page #################
+
+./create_chrwise_list.py /home/diagnostics/pipelines/WholeExomePipeline/bedfiles/lymphoma_probes_21102022_sortd.bed chrwise_lymphoma_list.txt
+
+#ChromosomeWise plotting
+for i in `cat /home/diagnostics/pipelines/WholeExomePipeline/sample_list.csv`; do nohup ./custom_scatter_chrwise.py chrwise_lymphoma_list.txt /home/diagnostics/pipelines/WholeExomePipeline/Final_Output_Lymphoma_new/cnvkit_lymphoma/$i.final.cnr /home/diagnostics/pipelines/WholeExomePipeline/Final_Output_Lymphoma_new/cnvkit_lymphoma/$i.final.cns /home/diagnostics/pipelines/WholeExomePipeline/Final_Output_Lymphoma_new/cnvkit_lymphoma/pdfs_70/${i}_chr_ &  done

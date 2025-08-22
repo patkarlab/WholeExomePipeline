@@ -159,14 +159,15 @@ process generatefinalbam {
 
 process generatefinalbamin {
 	publishDir "$PWD/Final_Output/${Sample}/", mode: 'copy', pattern: '*.final.bam*'
+	label 'process_high'
 	input:
-		val (Sample)
+		tuple val (Sample), file(bam), file(bambai)
 	output:
 		tuple val(Sample), file ("*.final.bam"), file ("*.final.bam.bai"), file ("*.old_final.bam"), file ("*.old_final.bam.bai")
 	script:
 	"""
-	${params.java_path}/java -Xmx16G -jar ${params.abra2_path}/abra2-2.23.jar --in ${params.sequences}/${Sample}*.bam --out ${Sample}.abra.bam --ref ${params.genome} --threads 8 --tmpdir ./ > abra.log
-	${params.samtools} sort ${params.sequences}/${Sample}*.bam > ${Sample}.old_final.bam
+	${params.java_path}/java -Xmx16G -jar ${params.abra2_path}/abra2-2.23.jar --in ${bam} --out ${Sample}.abra.bam --ref ${params.genome} --threads $task.cpus --tmpdir ./ > abra.log
+	${params.samtools} sort ${bam} > ${Sample}.old_final.bam
 	${params.samtools} index ${Sample}.old_final.bam > ${Sample}.old_final.bam.bai
 	${params.samtools} sort ${Sample}.abra.bam > ${Sample}.final.bam
 	${params.samtools} index ${Sample}.final.bam > ${Sample}.final.bam.bai
@@ -217,6 +218,7 @@ process coverage_mosdepth {
 }
 
 process freebayes {
+	label 'process_high'
 	input:
 		tuple val (Sample), file (finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
 	output:
@@ -569,6 +571,10 @@ workflow WES {
 		//merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
 }
 
+include { FASTQTOBAM } from './modules/processes.nf'
+include { HSMETRICS } from './modules/hsmetrics.nf'
+include { COVERAGE } from './modules/coverage.nf'
+
 workflow WES_BAMIN {
 	Channel
 		.fromPath(params.input)
@@ -576,8 +582,15 @@ workflow WES_BAMIN {
 		.flatten()
 		.map{ it }
 		.set { samples_ch }
+	// bam_ch = Channel.fromPath(params.input).splitCsv(header:false).flatten().map { sample -> def r1 = file("${params.sequences}/${sample}_S*_R1_*.fastq.gz")
+																							// def r2 = file("${params.sequences}/${sample}_S*_R2_*.fastq.gz")
+																							// tuple(sample, r1, r2)}
+	bam_ch = Channel.fromPath(params.input).splitCsv(header:false).flatten().map { sample -> def r1 = file("${params.sequences}/${sample}_R1.fastq.gz")
+																							def r2 = file("${params.sequences}/${sample}_R2.fastq.gz")
+																							tuple(sample, r1, r2)}
 	main:
-		generatefinalbamin(samples_ch)
+		final_bams_ch = FASTQTOBAM(bam_ch)
+		generatefinalbamin(final_bams_ch)
 		minimap_getitd(generatefinalbamin.out)
 		coverage_mosdepth(generatefinalbamin.out)
 		hsmetrics_run(generatefinalbamin.out)
@@ -628,6 +641,25 @@ workflow WES_NOPAIR {
 		merge_csv(pindel.out.join(somaticSeq_run.out.join(cava.out)))
 }
 
+workflow LYMPHOMA {
+	Channel
+		.fromPath(params.input)
+		.splitCsv(header:false)
+		.flatten()
+		.map{ it }
+		.set { samples_ch }
+	// bam_ch = Channel.fromPath(params.input).splitCsv(header:false).flatten().map { sample -> def r1 = file("${params.sequences}/${sample}_S*_R1_*.fastq.gz")
+																							// def r2 = file("${params.sequences}/${sample}_S*_R2_*.fastq.gz")
+																							// tuple(sample, r1, r2)}
+	bam_ch = Channel.fromPath(params.input).splitCsv(header:false).flatten().map { sample -> def r1 = file("${params.sequences}/${sample}_R1.fastq.gz")
+																							def r2 = file("${params.sequences}/${sample}_R2.fastq.gz")
+																							tuple(sample, r1, r2)}
+	main:
+		final_bams_ch = FASTQTOBAM(bam_ch)
+		COVERAGE(final_bams_ch)	
+		HSMETRICS(final_bams_ch)																						
+}
+
 workflow.onComplete {
-	log.info ( workflow.success ? "\n\nDone! Output in the 'Final_Output' directory \n" : "Oops .. something went wrong" )
+	log.info ( workflow.success ? "\n\nDone! Output in the ${params.output} directory \n" : "Oops .. something went wrong" )
 }
