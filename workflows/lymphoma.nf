@@ -9,6 +9,19 @@ BED file: ${params.bedfile}.bed
 Sequences in:${params.sequences}
 """
 
+
+gene_scatter = file("${params.gene_scatter_list}/exonwise_lymphoma_list.txt", checkIfExists: true )
+cnvkit_reference = file("${params.cnvkitRef}", checkIfExists: true )
+cnvkit_reference_delIG = file("${params.cnvkitRefDelIG}", checkIfExists: true )
+normal_bamfile = file("${params.normal_bam}", checkIfExists: true )
+normal_bamBaifile = file("${params.normal_bam}.bai", checkIfExists: true )
+genome_loc = file("${params.genome}", checkIfExists: true )
+genome_dir = file("${genome_loc.parent}", checkIfExists: true)
+genome_fasta = file("${genome_loc.name}")
+dbsnp = file("${params.site2}", checkIfExists: true)
+bedfile = file("${params.bedfile}.bed", checkIfExists: true)
+bed_regions = file("${params.bedfile}_regions.txt", checkIfExists: true)
+
 // Adapter Trimming, alignment and GATK BQSR (based on https://github.com/GavinHaLab/fastq_to_bam_paired_snakemake)
 include { FASTQTOBAM; ABRA_BAM } from '../modules/processes.nf'
 
@@ -19,16 +32,16 @@ include { HSMETRICS } from '../modules/hsmetrics.nf'
 include { COVERAGE_BEDTOOLS; COVERAGE_MOSDEPTH; COVERAGE_COVERVIEW} from '../modules/coverage.nf'
 
 // Variant calling
-include { FREEBAYES; HAPLOTYPECALLER; STRELKA; PLATYPUS; VARSCAN; DEEPVARIANT; LOFREQ;  PINDEL } from '../modules/variant_call.nf'
+include { FREEBAYES; HAPLOTYPECALLER; STRELKA; PLATYPUS; VARSCAN; DEEPVARIANT; LOFREQ;  PINDEL; DEEPSOMATIC } from '../modules/variant_call.nf'
 
 // Variant integration 
-include { SOMATICSEQ } from '../modules/somaticseq.nf'
+include { SOMATICSEQ; SOMATICSEQ_LYMPHOMA } from '../modules/somaticseq.nf'
 
 // CNV calling
-include { IFCNV; GCNV } from '../modules/cnv_call.nf'
+include { IFCNV; GCNV; CNVKIT} from '../modules/cnv_call.nf'
 
 // Translocation
-include { SVABA; LUMPY; TRANSLOCATION } from '../modules/translocation.nf'
+include { SVABA_LYMPHOMA; LUMPY; GRIDSS; DELLY; MANTA; TRANSLOCATION_LYMPHOMA } from '../modules/translocation.nf'
 
 // Format output
 include { DEEPVARIANT_GCNV; CAVA; MERGE_CSV} from '../modules/format_output.nf'
@@ -54,23 +67,28 @@ workflow LYMPHOMA {
 		COVERAGE_COVERVIEW(ABRA_BAM.out)
 		COVERAGE_BEDTOOLS(ABRA_BAM.out)	
 		HSMETRICS(ABRA_BAM.out)
-		FREEBAYES(ABRA_BAM.out)
-		HAPLOTYPECALLER(ABRA_BAM.out)
-		STRELKA(ABRA_BAM.out)
-		PLATYPUS(ABRA_BAM.out)
-		VARSCAN(ABRA_BAM.out)
-		DEEPVARIANT(ABRA_BAM.out)
-		LOFREQ(ABRA_BAM.out)
-		PINDEL(ABRA_BAM.out)
-		SOMATICSEQ(LOFREQ.out.join(VARSCAN.out.join(PLATYPUS.out.join(STRELKA.out.join(HAPLOTYPECALLER.out.join(FREEBAYES.out.join(ABRA_BAM.out)))))))																						
+		FREEBAYES(ABRA_BAM.out, genome_dir, genome_fasta, bedfile)
+		HAPLOTYPECALLER(ABRA_BAM.out, genome_dir, genome_fasta, bedfile, dbsnp)
+		STRELKA(ABRA_BAM.out, genome_dir, genome_fasta)
+		PLATYPUS(ABRA_BAM.out, genome_dir, genome_fasta, bed_regions)
+		VARSCAN(ABRA_BAM.out, genome_dir, genome_fasta, bedfile)
+		//DEEPVARIANT(ABRA_BAM.out)
+		DEEPSOMATIC(ABRA_BAM.out)
+		LOFREQ(ABRA_BAM.out, genome_dir, genome_fasta, bedfile)
+		PINDEL(ABRA_BAM.out, genome_dir, genome_fasta)
+		SOMATICSEQ_LYMPHOMA(LOFREQ.out.join(VARSCAN.out.join(PLATYPUS.out.join(STRELKA.out.join(HAPLOTYPECALLER.out.join(FREEBAYES.out.join(DEEPSOMATIC.out.join(ABRA_BAM.out))))))), genome_dir, genome_fasta)																						
 		IFCNV(ABRA_BAM.out.collect())
-		GCNV(ABRA_BAM.out)		
-		DEEPVARIANT_GCNV(DEEPVARIANT.out.join(GCNV.out))
-		CAVA(SOMATICSEQ.out)
-		SVABA(ABRA_BAM.out)
+		//GCNV(ABRA_BAM.out)
+		CNVKIT(final_bams_ch, gene_scatter, cnvkit_reference, cnvkit_reference_delIG)		
+		//DEEPVARIANT_GCNV(DEEPVARIANT.out.join(GCNV.out))
+		CAVA(SOMATICSEQ_LYMPHOMA.out)
+		SVABA_LYMPHOMA(ABRA_BAM.out, normal_bamfile, normal_bamBaifile)
 		LUMPY(ABRA_BAM.out)
-		TRANSLOCATION(SVABA.out.join(LUMPY.out))
-		MERGE_CSV(PINDEL.out.join(SOMATICSEQ.out.join(DEEPVARIANT.out.join(CAVA.out.join(COVERAGE_BEDTOOLS.out)))))
+		GRIDSS(final_bams_ch, normal_bamfile, normal_bamBaifile)
+		DELLY(ABRA_BAM.out, normal_bamfile, normal_bamBaifile)
+		MANTA(final_bams_ch, normal_bamfile, normal_bamBaifile)
+		TRANSLOCATION_LYMPHOMA(SVABA_LYMPHOMA.out.join(LUMPY.out))
+		MERGE_CSV(PINDEL.out.join(SOMATICSEQ_LYMPHOMA.out.join(CAVA.out.join(COVERAGE_BEDTOOLS.out))))
 }
 
 workflow.onComplete {

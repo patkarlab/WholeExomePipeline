@@ -75,8 +75,8 @@ process BQSR {
 }
 
 process APPLY_BQSR {
-	// publishDir "${params.output}/${Sample}/", mode: 'copy', pattern: '*_final.bam'
-	// publishDir "${params.output}/${Sample}/", mode: 'copy', pattern: '*_final.bam.bai'
+	publishDir "${params.output}/${Sample}/", mode: 'copy', pattern: '*_final.bam'
+	publishDir "${params.output}/${Sample}/", mode: 'copy', pattern: '*_final.bam.bai'
 	tag "${Sample}"
 	input:
 		tuple val(Sample), file(markdups_bam), file(markdups_metrics), file(recal_table)
@@ -143,10 +143,10 @@ process ABRA_BAM {
 	${params.bedtools} sort -i ${params.bedfile}.bed > sorted.bed
 
 	${params.java_path}/java -Xmx16G -jar ${params.abra2_path}/abra2-2.23.jar --in ${bamin} --out ${Sample}.abra.bam --ref ${params.genome} --threads $task.cpus --targets sorted.bed --tmpdir ./ > abra.log
-	${params.samtools} sort ${bamin} > ${Sample}.old_final.bam
-	${params.samtools} index ${Sample}.old_final.bam > ${Sample}.old_final.bam.bai
-	${params.samtools} sort ${Sample}.abra.bam > ${Sample}.final.bam
-	${params.samtools} index ${Sample}.final.bam > ${Sample}.final.bam.bai
+	${params.samtools} sort -@ ${task.cpus} ${bamin} > ${Sample}.old_final.bam
+	${params.samtools} index -@ ${task.cpus} ${Sample}.old_final.bam > ${Sample}.old_final.bam.bai
+	${params.samtools} sort -@ ${task.cpus} ${Sample}.abra.bam > ${Sample}.final.bam
+	${params.samtools} index -@ ${task.cpus} ${Sample}.final.bam > ${Sample}.final.bam.bai
 	"""
 }
 

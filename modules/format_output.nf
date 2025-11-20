@@ -32,13 +32,12 @@ process CAVA {
 process MERGE_CSV {
 	publishDir "${params.output}/${Sample}/", mode: 'copy', pattern: '*.xlsx'
 	input:
-		tuple val (Sample), file (pindelVep), file (somaticseqVep), file (somaticVcf), file (DeepVarOut), file (DeepVarVcf), file (cavaCsv), file (cov_regions)
+		tuple val (Sample), file (pindelVep), file (somaticCsv), file (somaticVcf), file (cavaCsv), file (cov_regions)
 	output:
-		val Sample
+		tuple val (Sample), file("${Sample}.xlsx")
 	script:
 	"""
-	python3 ${params.pharma_marker_script} $PWD/Final_Output/${Sample}/${Sample}_somaticseq.vep_annonvar.txt ${params.pharma_input_xlxs} Pharma.tsv
-	merge_csv.py ${Sample} ${params.output}/${Sample}/${Sample}.xlsx  ${cavaCsv} ${cov_regions} ${pindelVep} ${somaticseqVep} Pharma.tsv ${DeepVarOut}
+	merge_csv.py ${Sample} ${Sample}.xlsx  ${cavaCsv} ${cov_regions} ${pindelVep} ${somaticCsv}
 	sleep 1s
 	"""
 }

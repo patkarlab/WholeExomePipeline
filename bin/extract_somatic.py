@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+
+import sys
+import csv
+import pandas as pd
+
+vcf_file = sys.argv[1]
+outputFile = sys.argv[2]
+
+# Read VCF file into a DataFrame
+vcf_df = pd.read_csv(vcf_file, sep='\t', comment='#', header=None)
+#using comment"#" it will read anything starting with'#' should be treated as comments && header=None indicates that the file doesn't contain column headers
+#basically removing #info and latter specifilying the column name
+
+#for extracting the specified first 5 columns
+extracted_df = vcf_df.iloc[:, :5]
+
+# to extract variantcaller tool
+vlsfph_values = vcf_df[7].apply(lambda x: x.split('VLSFPH=')[1].split(';')[0].split(','))
+varcallers = ['VarScan2', 'LoFreq', 'Strelka', 'Freebayes', 'Platypus', 'Haplotypecaller']
+Variant_callers = []
+for values in vlsfph_values:
+	callers = []
+	for i, value in enumerate(values):
+		if value == '1':
+			callers.append(varcallers[i])
+	Variant_callers.append(", ".join(callers))
+
+extracted_df['Variant_callers'] = Variant_callers
+# Extract somatic values from the INFO column
+somatic_flags = vcf_df[7].apply(lambda x: 'SOMATIC' if 'SOMATIC' in x else '')
+
+# Add the "somaticflag" column to the extracted DataFrame
+extracted_df['SomaticFlag'] = somatic_flags
+
+#to extract ref_count and alt_count from CD4
+format_column = vcf_df[9]
+cd4_values = format_column.str.split(':').str[2].str.split(',')
+ref_count = cd4_values.str[0].astype(int) + cd4_values.str[1].astype(int)
+alt_count = cd4_values.str[2].astype(int) + cd4_values.str[3].astype(int)
+
+#print (cd4_values.str[0], cd4_values.str[1], ref_count)
+
+extracted_df['ref_count'] = ref_count
+extracted_df['alt_count'] = alt_count
+
+vaf_values = format_column.str.split(':').str[-1]  #extracting vaf valu and converting it into percentage
+vaf_values = pd.to_numeric(vaf_values) * 100
+
+#Add the VAF% values to the extracted DataFrame
+extracted_df['VAF%'] = vaf_values
+
+# Set column names
+extracted_df.columns = ['CHROM', 'POS', 'ID', 'REF', 'ALT', 'Variant_callers', 'SomaticFlag','ref_count', 'alt_count', 'VAF%']
+extracted_df = extracted_df[extracted_df['Variant_callers'] != '']	# This helps to remove variants which somaticseq is not confident
+extracted_df.to_csv(outputFile, sep =',', header=True, index=False)

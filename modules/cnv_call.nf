@@ -54,3 +54,34 @@ process GCNV {
 	${params.gatk_path} PostprocessGermlineCNVCalls --model-shard-path ${params.cohort_model} --calls-shard-path ${Sample}_gCNV/${Sample}-calls --allosomal-contig chrX --allosomal-contig chrY --contig-ploidy-calls ${Sample}-ploidy-calls --sample-index 0 --output-genotyped-intervals ${Sample}-genotyped-intervals.vcf.gz --output-genotyped-segments ${Sample}-genotyped-segments.vcf.gz --sequence-dictionary /home/reference_genomes/hg19_broad/hg19_all.dict --output-denoised-copy-ratios ${Sample}-denoised-copy-ratios.tsv
 	"""
 }
+
+process CNVKIT {
+	tag "${Sample}"
+	publishDir "${params.output}/${Sample}/", mode: 'copy', pattern: '*gene_scatter.pdf'
+	publishDir "${params.output}/${Sample}/", mode: 'copy', pattern: '*final-scatter.png'
+	publishDir "${params.output}/${Sample}/", mode: 'copy', pattern: '*final-diagram.pdf'
+	publishDir "${params.output}/${Sample}/", mode: 'copy', pattern: '*final-scatter_delIG.png'
+	publishDir "${params.output}/${Sample}/", mode: 'copy', pattern: '*final-diagram_delIG.pdf'
+	input:
+		tuple val (Sample), file(finalBam), file(finalBamBai)
+		file (gene_scatter)
+		file (cnvkit_reference)
+		file (cnvkit_reference_delIG)
+	output:
+		tuple val (Sample), file ("*gene_scatter.pdf"), file ("*final-scatter.png"), file ("*final-diagram.pdf"), file ("*final-scatter_delIG.png"), file ("*final-diagram_delIG.pdf")
+	script:
+	"""
+	[ -d results ] || mkdir results
+	[ -d results_delIG ] || mkdir results_delIG
+
+	cnvkit.sh ${finalBam} ${cnvkit_reference} results/
+	cp results/${Sample}_final-diagram.pdf ${Sample}_final-diagram.pdf
+	cp results/${Sample}_final-scatter.png ${Sample}_final-scatter.png
+
+	cnvkit.sh ${finalBam} ${cnvkit_reference_delIG} results_delIG/
+	cp results_delIG/${Sample}_final-diagram.pdf ${Sample}_final-diagram_delIG.pdf
+	cp results_delIG/${Sample}_final-scatter.png ${Sample}_final-scatter_delIG.png
+
+	custom_scatter_chrwise.py ${gene_scatter} results/${Sample}_final.cnr results/${Sample}_final.cns ${Sample}_chr_
+	"""
+}
