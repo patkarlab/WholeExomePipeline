@@ -9,6 +9,18 @@ BED file: ${params.bedfile}.bed
 Sequences in:${params.sequences}
 """
 
+gene_scatter = file("${params.gene_scatter_list}/exonwise_lymphoma_list.txt", checkIfExists: true )
+cnvkit_reference = file("${params.cnvkitRef}", checkIfExists: true )
+cnvkit_reference_delIG = file("${params.cnvkitRefDelIG}", checkIfExists: true )
+normal_bamfile = file("${params.normal_bam}", checkIfExists: true )
+normal_bamBaifile = file("${params.normal_bam}.bai", checkIfExists: true )
+genome_loc = file("${params.genome}", checkIfExists: true )
+genome_dir = file("${genome_loc.parent}", checkIfExists: true)
+genome_fasta = file("${genome_loc.name}")
+dbsnp = file("${params.site2}", checkIfExists: true)
+bedfile = file("${params.bedfile}.bed", checkIfExists: true)
+bed_regions = file("${params.bedfile}_regions.txt", checkIfExists: true)
+
 // Adapter Trimming, alignment and GATK BQSR (based on https://github.com/GavinHaLab/fastq_to_bam_paired_snakemake)
 include { FASTQTOBAM; ABRA_BAM } from '../modules/processes.nf'
 
@@ -51,20 +63,20 @@ workflow WES {
 		ABRA_BAM(final_bams_ch)
 		COVERAGE_MOSDEPTH(ABRA_BAM.out)
 		HSMETRICS(ABRA_BAM.out)
-		//FREEBAYES(ABRA_BAM.out)
-		//HAPLOTYPECALLER(ABRA_BAM.out)
-		//STRELKA(ABRA_BAM.out)
-		//PLATYPUS(ABRA_BAM.out)
-		//VARSCAN(ABRA_BAM.out)
-		//DEEPVARIANT(ABRA_BAM.out)
-		//LOFREQ(ABRA_BAM.out)
-		//PINDEL(ABRA_BAM.out)
-		//SOMATICSEQ(LOFREQ.out.join(VARSCAN.out.join(PLATYPUS.out.join(STRELKA.out.join(HAPLOTYPECALLER.out.join(FREEBAYES.out.join(ABRA_BAM.out)))))))
-		//IFCNV(ABRA_BAM.out.collect())
-		//GCNV(ABRA_BAM.out)		
-		//DEEPVARIANT_GCNV(DEEPVARIANT.out.join(GCNV.out))
-		//CAVA(SOMATICSEQ.out)
-		//MERGE_CSV_WES(PINDEL.out.join(SOMATICSEQ.out.join(DEEPVARIANT.out.join(CAVA.out.join(COVERAGE_MOSDEPTH.out.mosdepth_out)))))
+		FREEBAYES(ABRA_BAM.out, genome_dir, genome_fasta, bedfile)
+		HAPLOTYPECALLER(ABRA_BAM.out, genome_dir, genome_fasta, bedfile, dbsnp)
+		STRELKA(ABRA_BAM.out, genome_dir, genome_fasta)
+		PLATYPUS(ABRA_BAM.out, genome_dir, genome_fasta, bed_regions)
+		VARSCAN(ABRA_BAM.out, genome_dir, genome_fasta, bedfile)
+		DEEPVARIANT(ABRA_BAM.out)
+		LOFREQ(ABRA_BAM.out, genome_dir, genome_fasta, bedfile)
+		PINDEL(ABRA_BAM.out, genome_dir, genome_fasta)
+		SOMATICSEQ(LOFREQ.out.join(VARSCAN.out.join(PLATYPUS.out.join(STRELKA.out.join(HAPLOTYPECALLER.out.join(FREEBAYES.out.join(ABRA_BAM.out)))))), genome_dir, genome_fasta)
+		IFCNV(ABRA_BAM.out.collect())
+		GCNV(ABRA_BAM.out)		
+		DEEPVARIANT_GCNV(DEEPVARIANT.out.join(GCNV.out))
+		CAVA(SOMATICSEQ.out)
+		MERGE_CSV_WES(PINDEL.out.join(SOMATICSEQ.out.join(DEEPVARIANT.out.join(CAVA.out.join(COVERAGE_MOSDEPTH.out.mosdepth_out)))))
 }
 
 workflow.onComplete {
