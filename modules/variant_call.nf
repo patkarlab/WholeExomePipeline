@@ -130,6 +130,7 @@ process LOFREQ {
 
 process PINDEL {
 	label 'process_low'
+	tag "${Sample}"
 	input:
 		tuple val (Sample), file (finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
 		path (genome_dir)

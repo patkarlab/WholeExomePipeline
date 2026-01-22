@@ -4,7 +4,10 @@ input_vcf=$1
 output_path=$2
 
 source deactivate
-vep  -i ${input_vcf} --cache -o ${output_path}_vep.txt --offline --tab  --fork 16 --force_overwrite --symbol --protein  --af --max_af  --no_check_alleles --sift b --variant_class --canonical --allele_number --hgvs --shift_hgvs 1 --af_1kg --af_gnomadg --pubmed
+# Removing variants with large INDELS
+awk 'length($0) <= 100000 || /^#/' ${input_vcf} > pindel_filtered.vcf
+
+vep  -i pindel_filtered.vcf --cache -o ${output_path}_vep.txt --offline --tab  --force_overwrite --symbol --protein  --af --max_af  --no_check_alleles --sift b --variant_class --canonical --allele_number --hgvs --shift_hgvs 1 --af_1kg --af_gnomadg --pubmed
 filter_vep -i ${output_path}_vep.txt -o ${output_path}_filtered.txt --filter "(CANONICAL is YES) and (AF < 0.01 or not AF)" --force_overwrite
 grep -v "##" ${output_path}_filtered.txt > ${output_path}_vep_delheaders.txt
 source activate new_base
