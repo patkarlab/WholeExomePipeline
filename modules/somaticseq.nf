@@ -92,8 +92,9 @@ process SOMATICSEQ_LYMPHOMA {
 	vcf_sorter.sh ${Sample}_haplotypecaller_indels.vcf ${Sample}_haplotypecaller_indels_sort.vcf
 	vcf_sorter.sh ${Sample}_deepsomatic_snvs.vcf ${Sample}_deepsomatic_snvs_sort.vcf
 	vcf_sorter.sh ${Sample}_deepsomatic_indels.vcf ${Sample}_deepsomatic_indels_sort.vcf	
+	vcf_sorter.sh ${varscanVcf} ${Sample}_varscan_sort.vcf
 
-	somaticseq_parallel.py --output-directory ${Sample}.somaticseq --genome-reference ${genome_dir}/${genome_fasta} --inclusion-region ${params.bedfile}.bed --threads ${task.cpus} --pass-threshold 0 --lowqual-threshold 0 --algorithm xgboost -minMQ 0 -minBQ 0 -mincaller 0 --dbsnp-vcf /home/reference_genomes/dbSNPGATK/dbsnp_138.hg19.somatic.vcf single --bam-file ${finalBam} --varscan-vcf ${varscanVcf} --lofreq-vcf ${lofreqVcf} --strelka-vcf ${strelkaVcf} --sample-name ${Sample} --arbitrary-snvs ${Sample}_freebayes_cnvs_sort.vcf ${Sample}_platypus_cnvs_sort.vcf ${Sample}_haplotypecaller_cnvs_sort.vcf ${Sample}_deepsomatic_snvs_sort.vcf --arbitrary-indels ${Sample}_freebayes_indels_sort.vcf ${Sample}_platypus_indels_sort.vcf ${Sample}_haplotypecaller_indels_sort.vcf ${Sample}_deepsomatic_indels_sort.vcf
+	somaticseq_parallel.py --output-directory ${Sample}.somaticseq --genome-reference ${genome_dir}/${genome_fasta} --inclusion-region ${params.bedfile}.bed --threads ${task.cpus} --pass-threshold 0 --lowqual-threshold 0 --algorithm xgboost -minMQ 0 -minBQ 0 -mincaller 0 --dbsnp-vcf /home/reference_genomes/dbSNPGATK/dbsnp_138.hg19.somatic.vcf single --bam-file ${finalBam} --varscan-vcf ${Sample}_varscan_sort.vcf --lofreq-vcf ${lofreqVcf} --strelka-vcf ${strelkaVcf} --sample-name ${Sample} --arbitrary-snvs ${Sample}_freebayes_cnvs_sort.vcf ${Sample}_platypus_cnvs_sort.vcf ${Sample}_haplotypecaller_cnvs_sort.vcf ${Sample}_deepsomatic_snvs_sort.vcf --arbitrary-indels ${Sample}_freebayes_indels_sort.vcf ${Sample}_platypus_indels_sort.vcf ${Sample}_haplotypecaller_indels_sort.vcf ${Sample}_deepsomatic_indels_sort.vcf
 
 	vcf_sorter.sh ${Sample}.somaticseq/Consensus.sSNV.vcf ${Sample}.somaticseq/somaticseq_snv.vcf
 	bgzip -c ${Sample}.somaticseq/somaticseq_snv.vcf > ${Sample}.somaticseq/somaticseq_snv.vcf.gz
