@@ -28,7 +28,7 @@ process SVABA_LYMPHOMA {
 		tuple val (Sample), file ("*svaba.somatic.sv.vcf"), file ("*svaba.somatic.indel.vcf"), file("${Sample}.svaba.somatic.sv.tsv"), file("${Sample}.svaba.somatic.indel.tsv"), file("${Sample}.svaba.germline.sv.tsv"), file("${Sample}.svaba.germline.indel.tsv")
 	script:
 	"""
-	${params.svaba_path} run -t ${finalBam} -n ${normal_bamfile} -G ${params.genome} -p $task.cpus -D ${params.site2} -a ${Sample}_svaba
+	${params.svaba_path} run -t ${oldfinalBam} -n ${normal_bamfile} -G ${params.genome} -p $task.cpus -D ${params.site2} -a ${Sample}_svaba
 	format_csv.py ${Sample}_svaba.svaba.somatic.sv.vcf ${Sample}.svaba.somatic.sv.tsv
 	format_csv.py ${Sample}_svaba.svaba.germline.sv.vcf ${Sample}.svaba.germline.sv.tsv
 	format_csv.py ${Sample}_svaba.svaba.somatic.indel.vcf ${Sample}.svaba.somatic.indel.tsv
@@ -59,11 +59,11 @@ process LUMPY {
 		tuple val (Sample), file("${Sample}.vcf")
 	script:
 	"""
-	samtools view -@ ${task.cpus} -b -F 1294 ${finalBam} >  ${Sample}.discordants.unsorted.bam
-	samtools view -@ ${task.cpus} -h ${finalBam} | extractSplitReads_BwaMem.py -i stdin | samtools view -@ $task.cpus -Sb - > ${Sample}.splitters.unsorted.bam
+	samtools view -@ ${task.cpus} -b -F 1294 ${oldfinalBam} >  ${Sample}.discordants.unsorted.bam
+	samtools view -@ ${task.cpus} -h ${oldfinalBam} | extractSplitReads_BwaMem.py -i stdin | samtools view -@ $task.cpus -Sb - > ${Sample}.splitters.unsorted.bam
 	samtools sort -@ ${task.cpus} ${Sample}.discordants.unsorted.bam > ${Sample}.discordants.bam
 	samtools sort -@ ${task.cpus} ${Sample}.splitters.unsorted.bam > ${Sample}.splitters.bam
-	lumpyexpress -B ${finalBam} -S ${Sample}.splitters.bam -D ${Sample}.discordants.bam -o ${Sample}.vcf
+	lumpyexpress -B ${oldfinalBam} -S ${Sample}.splitters.bam -D ${Sample}.discordants.bam -o ${Sample}.vcf
 	"""
 }
 
@@ -73,14 +73,14 @@ process GRIDSS {
 	publishDir "${params.output}/${Sample}/translocatn/gridss", mode: 'copy', pattern: '*vcf'
 	publishDir "${params.output}/${Sample}/translocatn/gridss", mode: 'copy', pattern: '*tsv'
 	input:
-		tuple val (Sample), file(Bam), file(BamBai)
+		tuple val (Sample), file(finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
 		file (normal_bamfile)
 		file (normal_bamBaifile)
 	output:
 		tuple val (Sample), file ("*")
 	script:
 	"""
-	gridss_normal.sh ${params.genome} ${Bam} ${normal_bamfile} ${Sample}
+	gridss_normal.sh ${params.genome} ${oldfinalBam} ${normal_bamfile} ${Sample}
 	format_csv.py ${Sample}.gridss.vcf ${Sample}.gridss.tsv
 	format_csv.py ${Sample}.somatic.gridss.vcf ${Sample}.somatic.gridss.tsv
 	format_csv.py RM_${Sample}.somatic.gridss.vcf RM_${Sample}.somatic.gridss.tsv                                                     
@@ -93,22 +93,22 @@ process DELLY {
 	publishDir "${params.output}/${Sample}/translocatn/delly", mode: 'copy', pattern: '*vcf'
 	publishDir "${params.output}/${Sample}/translocatn/delly", mode: 'copy', pattern: '*tsv'
 	input:
-		tuple val (Sample), file(finalBams), file(finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
+		tuple val (Sample), file(finalBam), file(finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
 		file (normal_bamfile)
 		file (normal_bamBaifile)
 	output:
 		tuple val (Sample), file ("${Sample}_delly_somatic.vcf"), file ("${Sample}_delly_somatic.tsv"), file ("${Sample}_delly.vcf"), file("${Sample}_delly.tsv")
 	script:
 	"""
-	tumor_name=`basename ${finalBams} .final.bam`
-	control_name=`basename ${normal_bamfile} .final.bam`
+	tumor_name=`basename ${oldfinalBam} .old_final.bam`
+	control_name=`basename ${normal_bamfile} _final.bam`
 
 	echo -e "\${tumor_name}\ttumor" > samples.tsv
 	echo -e "\${control_name}\tcontrol" >> samples.tsv
 
 	${params.delly} call \
 		-g ${params.genome} \
-		${normal_bamfile} ${finalBams} \
+		${normal_bamfile} ${oldfinalBam} \
 		-o ${Sample}_delly.bcf
 	
 	bcftools view ${Sample}_delly.bcf -Ov -o ${Sample}_delly.vcf
@@ -128,30 +128,31 @@ process DELLY {
 process MANTA {
 	tag "${Sample}"
 	label "process_low"
+	errorStrategy 'ignore'
 	publishDir "${params.output}/${Sample}/translocatn/manta", mode: 'copy', pattern: '*vcf'
 	publishDir "${params.output}/${Sample}/translocatn/manta", mode: 'copy', pattern: '*tsv'
 	input:
-		tuple val (Sample), file(Bam), file(BamBai)
+		tuple val (Sample), file(finalBam), file(finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
 		file (normal_bamfile)
 		file (normal_bamBaifile)
 	output:
-		tuple val (Sample), file ("${Sample}_manta_candidateSV.vcf"), file ("${Sample}_manta_candidateSV.tsv"), file ("${Sample}_manta_diploidSV.vcf"), file ("${Sample}_manta_diploidSV.tsv"), file ("${Sample}_manta_somaticSV.vcf"), file ("${Sample}_manta_somaticSV.tsv")
+		tuple val (Sample), file ("${Sample}_manta_candidateSV.vcf"), file ("${Sample}_manta_diploidSV.vcf"), file ("${Sample}_manta_somaticSV.vcf"), file ("${Sample}_manta_somaticSV.tsv")
 	script:
 	"""
 	${params.manta_path}/configManta.py \
-		--bam ${normal_bamfile} \
-		--tumorBam ${Bam} \
-		--referenceFasta ${params.genome} --runDir ./
+		--normalBam ${normal_bamfile} \
+		--tumorBam ${oldfinalBam} \
+		--referenceFasta ${params.genome} --runDir ./ \
+		--exome
+
 	./runWorkflow.py -j ${task.cpus}
 
 	gunzip -c ./results/variants/candidateSV.vcf.gz > ${Sample}_manta_candidateSV.vcf
-	format_csv.py ${Sample}_manta_candidateSV.vcf ${Sample}_manta_candidateSV.tsv
 
 	gunzip -c ./results/variants/diploidSV.vcf.gz > ${Sample}_manta_diploidSV.vcf
-	format_csv.py ${Sample}_manta_diploidSV.vcf ${Sample}_manta_diploidSV.tsv
 
 	gunzip -c ./results/variants/somaticSV.vcf.gz > ${Sample}_manta_somaticSV.vcf
-	format_csv.py ${Sample}_manta_somaticSV.vcf ${Sample}_manta_somaticSV.tsv
+	format_manta_csv.py ${Sample}_manta_somaticSV.vcf ${Sample}_manta_somaticSV.tsv
 
 	"""	
 }

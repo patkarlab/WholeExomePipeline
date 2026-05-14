@@ -84,9 +84,9 @@ workflow LYMPHOMA {
 		CAVA(SOMATICSEQ_LYMPHOMA.out)
 		SVABA_LYMPHOMA(ABRA_BAM.out, normal_bamfile, normal_bamBaifile)
 		LUMPY(ABRA_BAM.out)
-		GRIDSS(final_bams_ch, normal_bamfile, normal_bamBaifile)
+		GRIDSS(ABRA_BAM.out, normal_bamfile, normal_bamBaifile)
 		DELLY(ABRA_BAM.out, normal_bamfile, normal_bamBaifile)
-		//MANTA(final_bams_ch, normal_bamfile, normal_bamBaifile)
+		MANTA(ABRA_BAM.out, normal_bamfile, normal_bamBaifile)
 		TRANSLOCATION_LYMPHOMA(SVABA_LYMPHOMA.out.join(LUMPY.out))
 		MERGE_CSV(PINDEL.out.join(SOMATICSEQ_LYMPHOMA.out.join(CAVA.out.join(COVERAGE_BEDTOOLS.out))))
 }
