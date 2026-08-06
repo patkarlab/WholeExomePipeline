@@ -27,4 +27,4 @@ pindel_df.to_excel(writer, sheet_name='pindel', index=False)
 somaticseq_df.to_excel(writer, sheet_name='somaticseq', index=False)
 
 # Save the Excel file
-writer.save()
+writer.close()

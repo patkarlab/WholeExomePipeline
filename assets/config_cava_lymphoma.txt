@@ -35,7 +35,7 @@
 
 # Name of compressed BED file specifying genomic regions variant annotation is restricted to
 # Possible values: string | Optional: yes
-@target = lymphoma_probes_21102022_sortd.bed.gz
+@target = TMC_Lymphoma_2.0_master_baseline_hg19_1.04mb_sortd.bed.gz
 
 # Name of file providing a list of the gene identifiers variant annotation is restricted to
 # Note: gene identifiers need to be given on separate lines in the file

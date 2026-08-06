@@ -2,20 +2,26 @@ process CAVA {
 	tag "${Sample}"
 	label 'process_medium'
 	input:
-		tuple val(Sample), file (somaticseqVcf)
-		path (cava_config)
-		path (GenFile)
-		path (GenDir)
-		path (bedfile)
-		path (SNPs)
-		path (SNPs_index)
-		path (ensembl_db)
-		path (ensembl_db_index)        
+		tuple val(Sample), file(somaticseqVcf)
+		path(cava_config)
+		path(GenFile)
+		path(GenDir)
+		path(bedfile)
+		path(bedfile_zipped)
+		path(SNPs)
+		path(SNPs_index)
+		path(ensembl_db)
+		path(ensembl_db_index)
+
 	output:
-		tuple val(Sample), file ("${Sample}.somaticseq.txt")
+		tuple val(Sample), file("${Sample}.somaticseq.txt")
+
 	script:
 	"""
-	cava.py -c ${cava_config} -t ${task.cpus} -i ${somaticseqVcf} -o ${Sample}.somaticseq
+	cp ${cava_config} cava.config
+	sed -i "s|^@target *=.*|@target = ${bedfile}.gz|g" cava.config
+
+	cava.py -c cava.config -t ${task.cpus} -i ${somaticseqVcf} -o ${Sample}.somaticseq
 	"""
 	stub:
 	"""
