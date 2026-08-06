@@ -1,0 +1,22 @@
+source activate cnvkit
+
+cnvkit.py target /home/diagnostics/pipelines/WholeExomePipeline/bedfiles/lymphoma_coordinates_21102022_sortd.bed -o targets.bed
+
+for i in `cat samples.dat`; do cnvkit.py coverage ${i}_final.bam targets.bed -o ${i}.targetcoverage.cnn; done
+
+cnvkit.py reference  *targetcoverage.cnn -f /home/reference_genomes/hg19_broad/hg19_all.fasta -o Reference_combpanel.cnn
+
+
+#Running cnvkit
+
+mkdir results
+
+for i in `cat samples.dat`; do /home/diagnostics/pipelines/WholeExomePipeline/bin/cnvkit.sh ${i}_final.bam Reference_combpanel.cnn results/ ; done
+
+
+#Making list of 70 probes per page and plotting.
+./create_chrwise_list.py /home/diagnostics/pipelines/WholeExomePipeline/bedfiles/lymphoma_coordinates_21102022_sortd.bed exonwise_lymphoma_list.txt
+
+source activate new_base
+
+for i in `cat samples.dat` ; do ./custom_scatter_chrwise.py exonwise_lymphoma_list.txt  results/${i}_final.cnr results/${i}_final.cns results/${i}_chr_; done
