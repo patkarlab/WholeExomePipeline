@@ -1,0 +1,1 @@
+/home/programs/CoverView-1.4.3/config/config.txt

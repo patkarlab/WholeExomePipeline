@@ -41,7 +41,7 @@ process STRELKA {
 		tuple val (Sample), file ("*.strelka.vcf")
 	script:
 	"""
-	${params.strelka_path}/configureStrelkaGermlineWorkflow.py --bam ${finalBam} --referenceFasta ${genome_dir}/${genome_fasta} --callRegions ${params.bedfile}.bed.gz --targeted --exome --runDir ./
+	${params.strelka_path}/configureStrelkaGermlineWorkflow.py --bam ${finalBam} --referenceFasta ${genome_dir}/${genome_fasta} --callRegions ${params.bedfile}.gz --targeted --exome --runDir ./
 	./runWorkflow.py -m local -j ${task.cpus}
 	gunzip -f ./results/variants/variants.vcf.gz
 	mv ./results/variants/variants.vcf ${Sample}.strelka.vcf
@@ -97,7 +97,7 @@ process DEEPVARIANT {
 	genome_path=`realpath ${params.genome}`
 	bam_path=`realpath ${finalBam} | awk 'BEGIN{OFS=FS="/"} {\$NF=""; print \$0}'`
 	pwd=`realpath ./`
-	${params.deepvariant} \${bam_path} \${pwd} ${Sample}_deepvar.vcf ${finalBam} \${genome_path} ${params.bedfile}.bed
+	${params.deepvariant} \${bam_path} \${pwd} ${Sample}_deepvar.vcf ${finalBam} \${genome_path} ${params.bedfile}
 	${params.bcftools_path} view -f PASS ${Sample}_deepvar.vcf > ${Sample}_deepvar_filt.vcf
 	# Combining data from vcf and vep annotation data
 	${params.vep_wrapper} ${Sample} ${Sample}_deepvar_filt.vcf ${Sample}_deepvariant.txt
@@ -173,7 +173,7 @@ process DEEPSOMATIC {
 	bam_path=`realpath ${finalBam} | awk 'BEGIN{OFS=FS="/"} {\$NF=""; print \$0}'`
 	vcf_output=${Sample}_DS.vcf
 	control_bam_path=`realpath /home/diagnostics/pipelines/WholeExomePipeline/scripts/cnvkit_lymphoma_pon_exonwise/ARPIT-LYMPHOMA.final.bam`
-	echo \$bam_path \$outpath \$vcf_output ${finalBam} \${control_bam_path} ${params.genome} ${params.bedfile}.bed
-	deepsomatic.sh \$bam_path \$outpath \$vcf_output ${finalBam} \${control_bam_path} ${params.genome} ${params.bedfile}.bed
+	echo \$bam_path \$outpath \$vcf_output ${finalBam} \${control_bam_path} ${params.genome} ${params.bedfile}
+	deepsomatic.sh \$bam_path \$outpath \$vcf_output ${finalBam} \${control_bam_path} ${params.genome} ${params.bedfile}
 	"""
 }

@@ -30,7 +30,7 @@ conda deactivate
 
 #source activate new_base
 
-#nextflow -c /home/diagnostics/pipelines/WholeExomePipeline/nextflow.config run main.nf -entry LYMPHOMA_PANEL \
+#nextflow -c /home/diagnostics/pipelines/WholeExomePipeline/lymphoma.config run main.nf -entry LYMPHOMA_PANEL \
 #--bedfile /home/diagnostics/pipelines/WholeExomePipeline/bedfiles/lymphoma_probes_21102022_sortd \
 #--output /home/diagnostics/pipelines/WholeExomePipeline/Final_Output/ \
 #-resume -bg

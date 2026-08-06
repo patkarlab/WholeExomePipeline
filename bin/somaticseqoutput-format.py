@@ -10,8 +10,8 @@ outfile = args[2]
 vartools=['VarScan2 | ', 'LoFreq | ', 'Strelka | ', 'Freebayes | ', 'Platypus | ', 'Haplotypecaller | ', 'Deepsomatic | ']
 
 df = pd.read_csv(filename)
-x = df['Otherinfo1']
-discarded_column=df.columns.get_loc('Otherinfo2')
+x = df['Otherinfo']
+discarded_column=df.columns.get_loc('Otherinfo')
 data = dict()
 somatic_cols=['Chr','Start','End','Ref','Alt','Variant_Callers','FILTER','SOMATIC_FLAG','VariantCaller_Count','REF_COUNT','ALT_COUNT','VAF','Func.refGene','Gene.refGene','ExonicFunc.refGene','AAChange.refGene','Gene_full_name.refGene','Function_description.refGene','Disease_description.refGene','cosmic84','PopFreqMax','1000G_ALL','ExAC_ALL','CG46','ESP6500siv2_ALL','InterVar_automated']
 data.setdefault('FILTER', [])

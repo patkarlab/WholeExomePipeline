@@ -11,7 +11,7 @@ process IFCNV {
 	"""
 	${params.links} $PWD/Final_Output/ ${params.input}
 	mkdir ifCNV
-	${params.ifcnv} ./ ${params.bedfile}.bed ifCNV
+	${params.ifcnv} ./ ${params.bedfile} ifCNV
 
 	# Making ifCNV's output directory for each sample
 	for i in `cat ${params.input}`

@@ -70,10 +70,10 @@ process LUMPY {
 process GRIDSS {
 	tag "${Sample}"
 	label "process_low"
-	publishDir "${params.output}/${Sample}/translocatn/gridss", mode: 'copy', pattern: '*vcf'
-	publishDir "${params.output}/${Sample}/translocatn/gridss", mode: 'copy', pattern: '*tsv'
+	publishDir "${params.outdir}/${Sample}/translocatn", mode: 'copy', pattern: '*vcf'
+	publishDir "${params.outdir}/${Sample}/translocatn", mode: 'copy', pattern: '*tsv'
 	input:
-		tuple val (Sample), file(finalBam), file (finalBamBai), file (oldfinalBam), file (oldfinalBamBai)
+		tuple val (Sample), file (oldfinalBam), file (oldfinalBamBai)
 		file (normal_bamfile)
 		file (normal_bamBaifile)
 	output:

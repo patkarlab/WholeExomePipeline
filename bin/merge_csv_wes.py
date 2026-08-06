@@ -40,4 +40,4 @@ pharma_df.to_excel(writer, sheet_name='pharma_marker', index=False)
 deepvar_df.to_excel(writer, sheet_name='deepvariant', index=False) 
 
 # Save the Excel file
-writer.save()
+writer.close()

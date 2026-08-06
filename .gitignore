@@ -6,3 +6,5 @@ sample_list.csv
 Final_Output*
 work/
 sequences/
+*.bam*
+*targetcoverage.cnn

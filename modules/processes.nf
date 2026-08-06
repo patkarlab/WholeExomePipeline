@@ -140,7 +140,7 @@ process ABRA_BAM {
 		tuple val(Sample), file ("*.final.bam"), file ("*.final.bam.bai"), file ("*.old_final.bam"), file ("*.old_final.bam.bai")
 	script:
 	"""
-	${params.bedtools} sort -i ${params.bedfile}.bed > sorted.bed
+	${params.bedtools} sort -i ${params.bedfile} > sorted.bed
 
 	${params.java_path}/java -Xmx16G -jar ${params.abra2_path}/abra2-2.23.jar --in ${bamin} --out ${Sample}.abra.bam --ref ${params.genome} --threads $task.cpus --targets sorted.bed --tmpdir ./ > abra.log
 	${params.samtools} sort -@ ${task.cpus} ${bamin} > ${Sample}.old_final.bam
