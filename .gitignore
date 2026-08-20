@@ -12,5 +12,6 @@ sequences/
 *.cns
 *.png
 *.pdf
+*.out
 bedfiles/*
 !bedfiles/*.bed.gz
