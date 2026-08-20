@@ -6,7 +6,8 @@ process SOMATICSEQ {
 		path (GenFile)
 		path (GenDir)
 		path (bedfile)
-		path (dbsnp_somatic)
+		path (known_SNPs)
+		path (known_SNPs_index)
 	output:
 		tuple val (Sample), file("${Sample}_somaticseq_snv.vcf"), file("${Sample}_somaticseq_indel.vcf")
 	script:
@@ -37,7 +38,7 @@ process SOMATICSEQ {
 	-minMQ 0 \
 	-minBQ 0 \
 	-mincaller 0 \
-	--dbsnp-vcf  ${dbsnp_somatic} \
+	--dbsnp-vcf  ${known_SNPs} \
 	single \
 	--sample-name ${Sample} \
 	--bam-file ${bam} \
@@ -65,7 +66,8 @@ process SOMATICSEQ_LYMPHOMA {
 		path (GenFile)
 		path (GenDir)
 		path (bedfile)
-		path (dbsnp_somatic)
+                path (known_SNPs)
+                path (known_SNPs_index)
 	output:
 		tuple val (Sample), file("${Sample}_somaticseq_snv.vcf"), file("${Sample}_somaticseq_indel.vcf")
 	script:
@@ -101,7 +103,7 @@ process SOMATICSEQ_LYMPHOMA {
 	-minMQ 0 \
 	-minBQ 0 \
 	-mincaller 0 \
-	--dbsnp-vcf  ${dbsnp_somatic} \
+	--dbsnp-vcf  ${known_SNPs} \
 	single \
 	--sample-name ${Sample} \
 	--bam-file ${bam} \

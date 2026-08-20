@@ -7,7 +7,7 @@ process FORMAT_ANNOVAR {
 		tuple val (Sample), file ("${Sample}.somaticseq.csv")
 	script:
 	"""
-	somaticseqoutput-format.py ${somaticseq_multianno} ${Sample}.somaticseq.csv
+	format_somaticseq_annovar.py ${somaticseq_multianno} ${Sample}.somaticseq.csv
 	"""
 	stub:
 	"""
