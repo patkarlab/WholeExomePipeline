@@ -9,13 +9,13 @@ BED file: ${params.bedfile}
 Sequences in:${params.sequences}
 """
 
-include { WES } from './workflows/whole_exome.nf'
+//include { WES } from './workflows/whole_exome.nf'
 include { LYMPHOMA } from './workflows/lymphoma.nf'
 
 
-workflow WHOLE_EXOME {
-	WES ()
-}
+//workflow WHOLE_EXOME {
+//	WES ()
+//}
 
 workflow LYMPHOMA_PANEL {
 	LYMPHOMA ()

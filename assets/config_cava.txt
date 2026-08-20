@@ -11,15 +11,15 @@
 
 # Absolute path to reference genome file
 # Possible values: string | Optional: no
-@reference = hg19_all.fasta
+@reference = resources_broad_hg38_v0_Homo_sapiens_assembly38.fasta
 
 # Absolute path to Ensembl transcript database file
 # Possible values: string | Optional: yes (if not specified, default transcript database will be used)
-@ensembl = /usr/local/bin/cava-v1.1.1/exome_65_GRCh37.gz
+@ensembl = 
 
 # Absolute path to dbSNP database file
 # Possible values: string | Optional: yes
-@dbsnp = /usr/local/bin/cava-v1.1.1/dbSNP138.gz
+@dbsnp = Homo_sapiens_assembly38.dbsnp138.vcf.gz 
 
 # Are variants with neither transcript nor dbSNP annotation to be included in the output?
 # Possible values: TRUE or FALSE | Optional: yes | Default value: TRUE

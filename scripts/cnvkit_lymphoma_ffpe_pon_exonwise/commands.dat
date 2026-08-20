@@ -1,0 +1,20 @@
+
+
+docker run --rm -u $(id -u):$(id -g) -v $PWD:$PWD -w $PWD -it ln1:5000/molhemat/cnvkit:1.0 cnvkit.py target TMC_Lymphoma_2.0_master_baseline_hg38_1.04mb_no_NM.bed -o targets.bed
+
+
+docker run --rm -u $(id -u):$(id -g) -v $PWD:$PWD -v /home/patkarlab-clinical/pipelines/WholeExomePipeline:/home/patkarlab-clinical/pipelines/WholeExomePipeline -w $PWD ln1:5000/molhemat/cnvkit:1.0 bash -c '
+for i in $(cat samp.dat); do
+    cnvkit.py coverage \
+        ${i}.final.bam \
+        targets.bed \
+        -o ${i}.targetcoverage.cnn
+done
+'
+
+docker run --rm -u $(id -u):$(id -g) -v $PWD:$PWD -v /home/patkarlab-clinical/references:/home/patkarlab-clinical/references -w $PWD ln1:5000/molhemat/cnvkit:1.0 cnvkit.py reference *.targetcoverage.cnn -f /home/patkarlab-clinical/references/hg38_broad/resources_broad_hg38_v0_Homo_sapiens_assembly38.fasta -o Ref_lymphoma_ffpe_6.cnn
+
+
+
+../cnvkit_lymphoma_pon_exonwise/create_chrwise_list.py TMC_Lymphoma_2.0_master_baseline_hg38_1.04mb_no_NM.bed exonwise_lymphoma_list.txt
+

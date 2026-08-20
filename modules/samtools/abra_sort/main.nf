@@ -3,6 +3,8 @@ process ABRA_SORT {
 	tag "${Sample}"
 	publishDir "${params.outdir}/${Sample}/", mode: 'copy', pattern: '*.final.bam'
 	publishDir "${params.outdir}/${Sample}/", mode: 'copy', pattern: '*.final.bam.bai'
+	publishDir "${params.outdir}/${Sample}/", mode: 'copy', pattern: '*.old_final.bam'
+	publishDir "${params.outdir}/${Sample}/", mode: 'copy', pattern: '*.old_final.bam.bai'
 	input:
 		tuple val(Sample), file (bam), file(bamBai), file(abra_bam)
 	output:

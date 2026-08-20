@@ -10,8 +10,6 @@ process CAVA {
 		path(bedfile_zipped)
 		path(SNPs)
 		path(SNPs_index)
-		path(ensembl_db)
-		path(ensembl_db_index)
 
 	output:
 		tuple val(Sample), file("${Sample}.somaticseq.txt")
